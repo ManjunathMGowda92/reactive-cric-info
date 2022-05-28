@@ -27,28 +27,28 @@ public class ProfileQueryController {
     @Autowired
     private PlayerProfileService playerService;
 
-    @GetMapping("/player-profile/{id}")
+    @GetMapping("/player/{id}")
     public Mono<PlayerInfoDTO> getProfileByPlayerId(@PathVariable("id") String playerId) {
         log.info("Player Id ::: " + playerId);
         return playerService.getPlayerById(playerId);
     }
 
-    @GetMapping("/player-profile/by-country-name/{country-name}")
+    @GetMapping("/player/by-country-name/{country-name}")
     public Flux<PlayerInfoDTO> getPlayerProfilesByCountry(@PathVariable("country-name") String country) {
         return playerService.getPlayersByCountry(country);
     }
 
-    @GetMapping("/player-profile/by-gender/{gender}")
+    @GetMapping("/player/by-gender/{gender}")
     public Flux<PlayerInfoDTO> getPlayersByGender(@PathVariable("gender") String gender) {
         return playerService.getPlayersByGender(gender);
     }
 
-    @GetMapping("/player-profile/batting-style/{style}")
+    @GetMapping("/player/batting-style/{style}")
     public Flux<PlayerInfoDTO> getPlayersByBattingStyle(@PathVariable("style") String battingStyle) {
         return playerService.getPlayersByBattingStyle(battingStyle);
     }
 
-    @GetMapping("/player-profile/bowling-style/{style}")
+    @GetMapping("/player/bowling-style/{style}")
     public Flux<PlayerInfoDTO> getPlayersByBowlingStyle(@PathVariable("style") String bowlingStyle) {
         return playerService.getPlayersByBowlingStyle(bowlingStyle);
     }

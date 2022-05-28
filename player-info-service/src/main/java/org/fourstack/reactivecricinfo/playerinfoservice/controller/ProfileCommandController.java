@@ -23,7 +23,7 @@ public class ProfileCommandController {
     @Autowired
     private  PlayerProfileService playerService;
 
-    @PostMapping("/player-profile")
+    @PostMapping("/player")
     public Mono<PlayerInfoDTO> createPlayerProfile(@RequestBody PlayerInfoDTO profileDto) {
 
         log.info("Received payload :: "+profileDto);
