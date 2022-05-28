@@ -1,20 +1,23 @@
 package org.fourstack.reactivecricinfo.playerinfoservice.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.fourstack.reactivecricinfo.playerinfoservice.codetype.BattingStyleType;
 import org.fourstack.reactivecricinfo.playerinfoservice.codetype.BowlingStyleType;
 import org.fourstack.reactivecricinfo.playerinfoservice.codetype.GenderType;
 import org.fourstack.reactivecricinfo.playerinfoservice.codetype.PlayerRoleType;
 import org.fourstack.reactivecricinfo.playerinfoservice.model.common.MultiMediaDocument;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "player-profile")
 public class PlayerProfile {
 
@@ -36,9 +39,18 @@ public class PlayerProfile {
     private BowlingStyleType bowlingStyle;
 
 
+    /*
+     * Below field for Auditing purpose.
+     */
     @CreatedDate
-    private LocalDate createdOn;
+    private LocalDateTime createdOn;
 
     @LastModifiedDate
-    private LocalDate updatedOn;
+    private LocalDateTime updatedOn;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String modifiedBy;
 }
