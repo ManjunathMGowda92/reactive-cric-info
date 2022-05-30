@@ -31,36 +31,46 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     public Mono<PlayerInfoDTO> getPlayerById(String playerId) {
         Mono<PlayerProfile> playerProfile = playerRepository.findById(playerId)
                 .switchIfEmpty(
-                        Mono.error(
-                                () -> new PlayerInfoNotFoundException("No Player Details found for the playerId: "+playerId)
-                        )
+                        generateError("No Player Details found for the playerId: ", playerId)
                 );
         Mono<PlayerInfoDTO> convertedObj =
                 playerProfileToDtoConverter.convert(playerProfile, (Mono.class));
         return convertedObj;
     }
 
+    private Mono<PlayerProfile> generateError(String message, String concatStr) {
+        return Mono.error(() -> new PlayerInfoNotFoundException(message + concatStr));
+    }
+
     @Override
     public Flux<PlayerInfoDTO> getPlayersByCountry(String country) {
-        Flux<PlayerProfile> playerProfiles = playerRepository.findByCountry(country);
+        Flux<PlayerProfile> playerProfiles = playerRepository.findByCountry(country)
+                .switchIfEmpty(
+                        generateError("No Player found for the Country :", country)
+                );
         return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
     }
 
     @Override
     public Flux<PlayerInfoDTO> getPlayersByGender(String gender) {
-        Flux<PlayerProfile> playerProfiles = playerRepository.findByGender(gender);
+        Flux<PlayerProfile> playerProfiles = playerRepository.findByGender(gender)
+                .switchIfEmpty(
+                        generateError("No Player found for the Gender :", gender)
+                );
         return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
     }
 
     @Override
     public Flux<PlayerInfoDTO> getPlayersByBattingStyle(String battingStyle) {
-        Flux<PlayerProfile> playerProfiles = playerRepository.findByBattingStyle(battingStyle);
+        Flux<PlayerProfile> playerProfiles = playerRepository.findByBattingStyle(battingStyle)
+                .switchIfEmpty(generateError("No Player found for the Batting Style :", battingStyle));
         return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
     }
 
     @Override
     public Flux<PlayerInfoDTO> getPlayersByBowlingStyle(String bowlingStyle) {
-        Flux<PlayerProfile> playerProfiles = playerRepository.findByBowlingStyle(bowlingStyle);
+        Flux<PlayerProfile> playerProfiles = playerRepository.findByBowlingStyle(bowlingStyle)
+                .switchIfEmpty(generateError("No Player found for the Bowling Style :", bowlingStyle));
         return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
     }
 
