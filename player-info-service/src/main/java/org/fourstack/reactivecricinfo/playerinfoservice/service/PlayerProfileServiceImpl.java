@@ -3,6 +3,7 @@ package org.fourstack.reactivecricinfo.playerinfoservice.service;
 import lombok.extern.slf4j.Slf4j;
 import org.fourstack.reactivecricinfo.playerinfoservice.dao.PlayerProfileRepository;
 import org.fourstack.reactivecricinfo.playerinfoservice.dto.PlayerInfoDTO;
+import org.fourstack.reactivecricinfo.playerinfoservice.exception.PlayerInfoNotFoundException;
 import org.fourstack.reactivecricinfo.playerinfoservice.model.PlayerProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -28,7 +29,12 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
 
     @Override
     public Mono<PlayerInfoDTO> getPlayerById(String playerId) {
-        Mono<PlayerProfile> playerProfile = playerRepository.findById(playerId);
+        Mono<PlayerProfile> playerProfile = playerRepository.findById(playerId)
+                .switchIfEmpty(
+                        Mono.error(
+                                () -> new PlayerInfoNotFoundException("No Player Details found for the playerId: "+playerId)
+                        )
+                );
         Mono<PlayerInfoDTO> convertedObj =
                 playerProfileToDtoConverter.convert(playerProfile, (Mono.class));
         return convertedObj;
