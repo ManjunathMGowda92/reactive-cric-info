@@ -9,6 +9,10 @@ springdoc:
 server:
   port: 8082
 
+app:
+  version: 1.0.0
+  description: Application holds the bowler related information.
+
 #Set Application name
 spring:
   application:
