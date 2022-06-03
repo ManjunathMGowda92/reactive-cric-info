@@ -1,0 +1,35 @@
+#Set Swagger related Open API3 properties
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: swagger-ui-custom.html
+
+#Set Server port
+server:
+  port: 8082
+
+#Set Application name
+spring:
+  application:
+    name: bowling-info-service
+  #Set Context path for web-flux
+  webflux:
+    base-path: /bowling-service
+
+  #Set Embedded Mongo version and features
+  mongodb:
+    embedded:
+      version: latest
+      features:
+        - ONLY_WITH_SSL
+        - ONLY_WINDOWS_2008_SERVER
+        - NO_HTTP_INTERFACE_ARG
+        - ONLY_64BIT
+
+  #Set database name and port
+  data:
+    mongodb:
+      database: bowling-info-service
+      port: 56650
+

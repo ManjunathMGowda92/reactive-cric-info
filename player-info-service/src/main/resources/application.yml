@@ -5,8 +5,15 @@ springdoc:
   swagger-ui:
     path: /swagger-ui-custom.html
 
-# Set Context Path
+# Set Server port
+server:
+  port: 8080
+
+#Set application name
 spring:
+  application:
+    name: player-info-service
+  # Set Context Path
   webflux:
     base-path: /player-profile
   # Set Embedded MongoDB version and features

@@ -27,6 +27,12 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     @Autowired
     private ConversionService multipleProfileToDtoConverter;
 
+    /**
+     * Method to fetch the Player details based on the player-id.
+     *
+     * @param playerId Unique player-id associated with Player.
+     * @return PlayerInformation as {@link PlayerInfoDTO}
+     */
     @Override
     public Mono<PlayerInfoDTO> getPlayerById(String playerId) {
         Mono<PlayerProfile> playerProfile = playerRepository.findById(playerId)
@@ -42,6 +48,12 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
         return Mono.error(() -> new PlayerInfoNotFoundException(message + concatStr));
     }
 
+    /**
+     * Method to fetch Players information by using country as parameter.
+     *
+     * @param country Country name
+     * @return Flux of Players Information.
+     */
     @Override
     public Flux<PlayerInfoDTO> getPlayersByCountry(String country) {
         Flux<PlayerProfile> playerProfiles = playerRepository.findByCountry(country)
@@ -51,6 +63,12 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
         return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
     }
 
+    /**
+     * Method to fetch Players information by using gender as parameter.
+     *
+     * @param gender Gender Type : MALE, FEMALE or OTHER
+     * @return Flux of Players Information.
+     */
     @Override
     public Flux<PlayerInfoDTO> getPlayersByGender(String gender) {
         Flux<PlayerProfile> playerProfiles = playerRepository.findByGender(gender)
@@ -60,6 +78,12 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
         return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
     }
 
+    /**
+     * Method to fetch Players information by using Batting Style as parameter.
+     *
+     * @param battingStyle @{@link org.fourstack.reactivecricinfo.playerinfoservice.codetype.BattingStyleType}
+     * @return Flux of Players Information.
+     */
     @Override
     public Flux<PlayerInfoDTO> getPlayersByBattingStyle(String battingStyle) {
         Flux<PlayerProfile> playerProfiles = playerRepository.findByBattingStyle(battingStyle)
@@ -67,6 +91,12 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
         return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
     }
 
+    /**
+     * Method to fetch Players information by using Bowling Style as parameter.
+     *
+     * @param bowlingStyle {@link org.fourstack.reactivecricinfo.playerinfoservice.codetype.BowlingStyleType}
+     * @return Flux of Players Information.
+     */
     @Override
     public Flux<PlayerInfoDTO> getPlayersByBowlingStyle(String bowlingStyle) {
         Flux<PlayerProfile> playerProfiles = playerRepository.findByBowlingStyle(bowlingStyle)
@@ -77,11 +107,10 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
 
     @Override
     public Mono<PlayerInfoDTO> createPlayerProfile(PlayerInfoDTO dto) {
-        PlayerProfile playerProfile = playerDtoToProfileConverter.convert(dto, PlayerProfile.class);
+        var playerProfile = playerDtoToProfileConverter.convert(dto, PlayerProfile.class);
         Mono<PlayerProfile> profileMono = playerRepository.save(playerProfile);
 
         return playerProfileToDtoConverter.convert(profileMono, Mono.class);
     }
-
 
 }
