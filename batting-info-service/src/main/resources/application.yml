@@ -1,0 +1,34 @@
+#Set Swagger related OPen API3 properties
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: swagger-ui-custom.html
+
+#Set Server port
+server:
+  port: 8084
+
+app:
+  version: 1.0.0
+  description: Application holds the batting related information.
+
+#Set Application name
+spring:
+  application:
+    name: batting-info-service
+  #Set Context path for web-flux
+  webflux:
+    base-path: /batting-service
+
+  #Set Embedded Mongo version and features
+  mongodb:
+    embedded:
+      version: latest
+      features: ONLY_WITH_SSL, ONLY_WINDOWS_2008_SERVER, NO_HTTP_INTERFACE_ARG, ONLY_64BIT
+
+  #Set database name and port
+  data:
+    mongodb:
+      database: batting-info-service
+      port: 56670

@@ -25,4 +25,4 @@ spring:
   data:
     mongodb:
       database: player-info-service
-      port: 56607
+      port: 56660
