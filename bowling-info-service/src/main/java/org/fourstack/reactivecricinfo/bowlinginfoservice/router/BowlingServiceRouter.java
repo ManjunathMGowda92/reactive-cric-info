@@ -1,6 +1,8 @@
 package org.fourstack.reactivecricinfo.bowlinginfoservice.router;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.fourstack.reactivecricinfo.bowlinginfoservice.handler.AppInfoServiceHandler;
 import org.fourstack.reactivecricinfo.bowlinginfoservice.handler.BowlingServiceHandler;
 import org.springdoc.core.annotations.RouterOperation;
@@ -57,14 +59,19 @@ public class BowlingServiceRouter {
                     path = "/api/v1/bowling-statistics/{player-id}",
                     operation = @Operation(operationId = "fetchBowlingInfoByPlayerId",
                             method = "GET", tags = "Bowling-service Router APIs",
-                            summary = "API to fetch the Bowling Info by Player Id.")
+                            summary = "API to fetch the Bowling Info by Player Id.",
+
+                            parameters = {
+                                    @Parameter(name = "player-id", required = true,
+                                            description = "player-id", in = ParameterIn.PATH)
+                            })
             )
     })
     @Bean
     public RouterFunction<ServerResponse> serviceRouteApis(BowlingServiceHandler handler) {
         return RouterFunctions.route()
                 .nest(RequestPredicates.path("/api/v1/bowling-statistics"), builder -> {
-                    builder.GET("{player-id}", handler::fetchBowlingInfo);
+                    builder.GET("/{player-id}", handler::fetchBowlingInfo);
                 }).build();
     }
 }
