@@ -1,6 +1,7 @@
 package org.fourstack.reactivecricinfo.playerinfoservice.converters;
 
 import lombok.extern.slf4j.Slf4j;
+import org.fourstack.reactivecricinfo.playerinfoservice.dto.PlayerBasicInfoDTO;
 import org.fourstack.reactivecricinfo.playerinfoservice.dto.PlayerInfoDTO;
 import org.fourstack.reactivecricinfo.playerinfoservice.model.PlayerProfile;
 import org.fourstack.reactivecricinfo.playerinfoservice.model.common.MultiMediaDocument;
@@ -26,19 +27,12 @@ public class PlayerDtoToProfileConverter implements
         log.info("Converting DTO to PlayerProfile model.");
 
         PlayerProfile profile = new PlayerProfile();
-        profile.setPlayerId(RandomPlayerIdGenerator.generateRandomId(source.getFirstName()));
+        String playerId = (source.getPlayerId() == null || source.getPlayerId().isEmpty()) ?
+                RandomPlayerIdGenerator.generateRandomId(source.getBasicInfo().getFirstName()) :
+                source.getPlayerId();
+        profile.setPlayerId(playerId);
 
-        profile.setFirstName(source.getFirstName());
-        profile.setLastName(source.getLastName());
-        profile.setMiddleName(source.getMiddleName());
-
-        profile.setCountry(source.getCountry());
-        profile.setDob(source.getBirthDate());
-        profile.setPlaceOfBirth(source.getBirthPlace());
-
-        profile.setNickName(source.getNickName());
-        profile.setGender(source.getGender());
-
+        updateFromBasicInfo(source, profile);
         setMultiMediaContent(source, profile);
 
         profile.setRoles(source.getRoles());
@@ -46,6 +40,21 @@ public class PlayerDtoToProfileConverter implements
         profile.setBattingStyle(source.getBattingStyle());
 
         return profile;
+    }
+
+    private void updateFromBasicInfo(PlayerInfoDTO source, PlayerProfile profile) {
+        PlayerBasicInfoDTO basicInfo = source.getBasicInfo();
+
+        profile.setFirstName(basicInfo.getFirstName());
+        profile.setLastName(basicInfo.getLastName());
+        profile.setMiddleName(basicInfo.getMiddleName());
+
+        profile.setCountry(basicInfo.getCountry());
+        profile.setDob(basicInfo.getBirthDate());
+        profile.setPlaceOfBirth(basicInfo.getBirthPlace());
+
+        profile.setNickName(basicInfo.getNickName());
+        profile.setGender(basicInfo.getGender());
     }
 
     /**
