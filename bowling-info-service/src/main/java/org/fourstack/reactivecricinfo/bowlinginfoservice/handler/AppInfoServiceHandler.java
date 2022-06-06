@@ -36,8 +36,10 @@ public class AppInfoServiceHandler {
 
     private List<EndPointsDesc> getEndpointsDetails() {
         return List.of(
-                new EndPointsDesc(MethodType.GET, "/api/v1/info", "Basic Information about the Application"),
-                new EndPointsDesc(MethodType.GET, "/api/v1/bowling-statistics/{player-id}", "API to fetch Bowling statistics by Player Id")
+                new EndPointsDesc(MethodType.GET, "/api/v1/info", "Basic Information about the Application."),
+                new EndPointsDesc(MethodType.GET, "/api/v1/bowling-info/by-player-id/{player-id}", "API to fetch Bowling statistics by Player Id."),
+                new EndPointsDesc(MethodType.GET, "/api/v1/bowling-info/{id}", "API to fetch Bowling statistics by Id."),
+                new EndPointsDesc(MethodType.GET, "/api/v1/bowling-info", "API to save Bowling statistics to Database.")
         );
     }
 }

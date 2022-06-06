@@ -74,17 +74,42 @@ public class BowlingServiceRouter {
      */
     @RouterOperations({
             @RouterOperation(
-                    path = "/api/v1/bowling-statistics/{player-id}",
+                    path = "/api/v1/bowling-info/by-player-id/{player-id}",
                     operation = @Operation(operationId = "fetchBowlingInfoByPlayerId",
                             method = "GET", tags = "Bowling-service Router APIs",
                             summary = "API to fetch the Bowling Info by Player Id.",
                             parameters = {
-                                    @Parameter(name = "player-id", required = true,
-                                            description = "player-id", in = ParameterIn.PATH)
+                                    @Parameter(
+                                            name = "player-id", required = true,
+                                            description = "player-id", in = ParameterIn.PATH
+                                    )
                             })
             ),
             @RouterOperation(
-                    path = "/api/v1/bowling-statistics",
+                    path = "/api/v1/bowling-info/{id}",
+                    operation = @Operation(
+                            operationId = "fetchBowlingInfoById",
+                            method = "GET", tags = "Bowling-service Router APIs",
+                            summary = "API to fetch Bowling Info by Id.",
+                            parameters = {
+                                    @Parameter(
+                                            name = "id", required = true,
+                                            description = "bowling info id", in = ParameterIn.PATH
+                                    )
+                            },
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "201",
+                                            description = "Successful creation of BowlingInfo Data",
+                                            content = @Content(
+                                                    schema = @Schema(implementation = BowlingInfoDTO.class)
+                                            )
+                                    )
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/bowling-info",
                     operation = @Operation(operationId = "createBowlingInfo",
                             method = "POST", tags = "Bowling-service Router APIs",
                             summary = "API to create the Bowling info",
@@ -114,8 +139,9 @@ public class BowlingServiceRouter {
     @Bean
     public RouterFunction<ServerResponse> serviceRouteApis(BowlingServiceHandler handler) {
         return RouterFunctions.route()
-                .nest(RequestPredicates.path("/api/v1/bowling-statistics"), builder -> {
-                    builder.GET("/{player-id}", handler::fetchBowlingInfo)
+                .nest(RequestPredicates.path("/api/v1/bowling-info"), builder -> {
+                    builder.GET("/by-player-id/{player-id}", handler::fetchBowlingInfoByPlayerId)
+                            .GET("/{id}", handler::fetchBowlingInfoById)
                             .POST("", handler::createBowlingInfo);
                 }).build();
     }

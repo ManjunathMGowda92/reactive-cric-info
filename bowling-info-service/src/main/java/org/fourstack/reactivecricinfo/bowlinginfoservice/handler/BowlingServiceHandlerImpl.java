@@ -31,19 +31,28 @@ public class BowlingServiceHandlerImpl implements BowlingServiceHandler {
 
 
     @Override
-    public Mono<ServerResponse> fetchBowlingInfo(ServerRequest request) {
+    public Mono<ServerResponse> fetchBowlingInfoByPlayerId(ServerRequest request) {
         System.out.println("***********************************************************************************");
         String playerId = request.pathVariable("player-id");
         System.out.println(playerId);
-        BowlingInfo info = bowlingInfo(playerId);
-        BowlingInfoDTO infoDTO = daoToDtoConverter.convert(info, BowlingInfoDTO.class);
-        return ServerResponse.ok().bodyValue(infoDTO);
+
+        return repository.findByPlayerId(playerId)
+                .map(dao -> daoToDtoConverter.convert(dao, BowlingInfoDTO.class))
+                .flatMap(ServerResponse.ok() :: bodyValue);
+    }
+
+    @Override
+    public Mono<ServerResponse> fetchBowlingInfoById(ServerRequest request) {
+        String id = request.pathVariable("id");
+        return repository.findById(id)
+                .map(dao -> daoToDtoConverter.convert(dao, BowlingInfoDTO.class))
+                .flatMap(ServerResponse.ok() :: bodyValue);
     }
 
     @Override
     public Mono<ServerResponse> createBowlingInfo(ServerRequest request) {
         Mono<BowlingInfoDTO> dtoMono = request.bodyToMono(BowlingInfoDTO.class);
-        
+
         return dtoMono
                 .map(dto -> dtoToDaoConverter.convert(dto, BowlingInfo.class))
                 .flatMap(repository::save)
