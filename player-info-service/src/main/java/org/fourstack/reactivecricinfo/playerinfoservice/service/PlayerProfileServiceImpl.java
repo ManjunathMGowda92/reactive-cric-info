@@ -19,13 +19,10 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     private PlayerProfileRepository playerRepository;
 
     @Autowired
-    private ConversionService playerProfileToDtoConverter;
+    private ConversionService profileToDtoConverter;
 
     @Autowired
     private ConversionService playerDtoToProfileConverter;
-
-    @Autowired
-    private ConversionService multipleProfileToDtoConverter;
 
     /**
      * Method to fetch the Player details based on the player-id.
@@ -35,13 +32,11 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
      */
     @Override
     public Mono<PlayerInfoDTO> getPlayerById(String playerId) {
-        Mono<PlayerProfile> playerProfile = playerRepository.findById(playerId)
+        return playerRepository
+                .findById(playerId)
                 .switchIfEmpty(
                         generateError("No Player Details found for the playerId: ", playerId)
-                );
-        Mono<PlayerInfoDTO> convertedObj =
-                playerProfileToDtoConverter.convert(playerProfile, (Mono.class));
-        return convertedObj;
+                ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
     private Mono<PlayerProfile> generateError(String message, String concatStr) {
@@ -56,11 +51,11 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
      */
     @Override
     public Flux<PlayerInfoDTO> getPlayersByCountry(String country) {
-        Flux<PlayerProfile> playerProfiles = playerRepository.findByCountry(country)
+        return playerRepository
+                .findByCountry(country)
                 .switchIfEmpty(
                         generateError("No Player found for the Country :", country)
-                );
-        return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
+                ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
     /**
@@ -71,11 +66,11 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
      */
     @Override
     public Flux<PlayerInfoDTO> getPlayersByGender(String gender) {
-        Flux<PlayerProfile> playerProfiles = playerRepository.findByGender(gender)
+        return playerRepository
+                .findByGender(gender)
                 .switchIfEmpty(
                         generateError("No Player found for the Gender :", gender)
-                );
-        return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
+                ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
     /**
@@ -86,9 +81,10 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
      */
     @Override
     public Flux<PlayerInfoDTO> getPlayersByBattingStyle(String battingStyle) {
-        Flux<PlayerProfile> playerProfiles = playerRepository.findByBattingStyle(battingStyle)
-                .switchIfEmpty(generateError("No Player found for the Batting Style :", battingStyle));
-        return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
+        return playerRepository
+                .findByBattingStyle(battingStyle)
+                .switchIfEmpty(generateError("No Player found for the Batting Style :", battingStyle))
+                .map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
     /**
@@ -99,18 +95,19 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
      */
     @Override
     public Flux<PlayerInfoDTO> getPlayersByBowlingStyle(String bowlingStyle) {
-        Flux<PlayerProfile> playerProfiles = playerRepository.findByBowlingStyle(bowlingStyle)
-                .switchIfEmpty(generateError("No Player found for the Bowling Style :", bowlingStyle));
-        return multipleProfileToDtoConverter.convert(playerProfiles, Flux.class);
+        return playerRepository
+                .findByBowlingStyle(bowlingStyle)
+                .switchIfEmpty(generateError("No Player found for the Bowling Style :", bowlingStyle))
+                .map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
 
     @Override
     public Mono<PlayerInfoDTO> createPlayerProfile(PlayerInfoDTO dto) {
         var playerProfile = playerDtoToProfileConverter.convert(dto, PlayerProfile.class);
-        Mono<PlayerProfile> profileMono = playerRepository.save(playerProfile);
 
-        return playerProfileToDtoConverter.convert(profileMono, Mono.class);
+        return playerRepository.save(playerProfile)
+                .map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
 }

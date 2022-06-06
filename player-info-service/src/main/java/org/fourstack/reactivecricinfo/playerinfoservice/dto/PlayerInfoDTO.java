@@ -19,16 +19,7 @@ import java.util.List;
 public class PlayerInfoDTO {
 
     private String playerId;
-    private String firstName;
-    private String lastName;
-    private String middleName;
-    private String country;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate birthDate;
-    private String birthPlace;
-    private String nickName;
-    private GenderType gender;
-
+    private PlayerBasicInfoDTO basicInfo;
     private MultiMediaDocument imageInfo;
     private List<PlayerRoleType> roles;
     private BattingStyleType battingStyle;
