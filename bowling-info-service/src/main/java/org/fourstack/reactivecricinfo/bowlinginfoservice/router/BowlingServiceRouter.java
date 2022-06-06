@@ -3,13 +3,18 @@ package org.fourstack.reactivecricinfo.bowlinginfoservice.router;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.fourstack.reactivecricinfo.bowlinginfoservice.dto.AppInfo;
+import org.fourstack.reactivecricinfo.bowlinginfoservice.dto.BowlingInfoDTO;
 import org.fourstack.reactivecricinfo.bowlinginfoservice.handler.AppInfoServiceHandler;
 import org.fourstack.reactivecricinfo.bowlinginfoservice.handler.BowlingServiceHandler;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springdoc.core.annotations.RouterOperations;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
@@ -33,9 +38,22 @@ public class BowlingServiceRouter {
      * @param handler HandlerClass which defines specific route function
      * @return RouterFunction object
      */
-    @RouterOperation(path = "/api/v1/info", operation = @Operation(operationId = "fetchServiceInfo",
-            tags = "Bowling-service Informational API", method = "GET",
-            summary = "API to fetch the information about Bowling Service Application.")
+    @RouterOperation(path = "/api/v1/info",
+            operation = @Operation(
+                    operationId = "fetchServiceInfo",
+                    tags = "Bowling-service Informational API", method = "GET",
+                    summary = "API to fetch the information about Bowling Service Application.",
+                    responses = {
+                            @ApiResponse(
+                                    responseCode = "200",
+                                    description = "Successful fetch of Application Info",
+                                    content = @Content(
+                                            schema = @Schema(implementation = AppInfo.class)
+                                    )
+                            )
+                    }
+            )
+
     )
     @Bean
     public RouterFunction<ServerResponse> welcomeRouteApi(AppInfoServiceHandler handler) {
@@ -60,18 +78,45 @@ public class BowlingServiceRouter {
                     operation = @Operation(operationId = "fetchBowlingInfoByPlayerId",
                             method = "GET", tags = "Bowling-service Router APIs",
                             summary = "API to fetch the Bowling Info by Player Id.",
-
                             parameters = {
                                     @Parameter(name = "player-id", required = true,
                                             description = "player-id", in = ParameterIn.PATH)
                             })
+            ),
+            @RouterOperation(
+                    path = "/api/v1/bowling-statistics",
+                    operation = @Operation(operationId = "createBowlingInfo",
+                            method = "POST", tags = "Bowling-service Router APIs",
+                            summary = "API to create the Bowling info",
+                            requestBody = @RequestBody(
+                                    required = true,
+                                    content = @Content(
+                                            schema = @Schema(implementation = BowlingInfoDTO.class)
+                                    ),
+                                    description = "Request Body for BowlingInfo DTO"
+                            ),
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "201",
+                                            description = "Successful creation of BowlingInfo Data",
+                                            content = @Content(
+                                                    schema = @Schema(implementation = BowlingInfoDTO.class)
+                                            )
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "400",
+                                            description = "BAD_REQUEST provided"
+                                    )
+                            }
+                    )
             )
     })
     @Bean
     public RouterFunction<ServerResponse> serviceRouteApis(BowlingServiceHandler handler) {
         return RouterFunctions.route()
                 .nest(RequestPredicates.path("/api/v1/bowling-statistics"), builder -> {
-                    builder.GET("/{player-id}", handler::fetchBowlingInfo);
+                    builder.GET("/{player-id}", handler::fetchBowlingInfo)
+                            .POST("", handler::createBowlingInfo);
                 }).build();
     }
 }
