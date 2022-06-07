@@ -4,7 +4,9 @@ import org.fourstack.reactivecricinfo.battinginfoservice.dto.BattingInfoDTO;
 import org.fourstack.reactivecricinfo.battinginfoservice.dto.StatisticsDTO;
 import org.fourstack.reactivecricinfo.battinginfoservice.model.BattingInfo;
 import org.fourstack.reactivecricinfo.battinginfoservice.model.BattingStatistics;
-import org.fourstack.reactivecricinfo.battinginfoservice.util.IdGenerationUtil;
+
+import static org.fourstack.reactivecricinfo.battinginfoservice.util.IdGenerationUtil.*;
+
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +23,7 @@ public class BattingDtoToDaoConverter implements Converter<BattingInfoDTO, Batti
         String battingId = source.getBattingId();
         String playerId = source.getPlayerId();
         target.setId((battingId == null || battingId.isBlank()) ?
-                IdGenerationUtil.generateBattingInfoId(playerId) : battingId);
+                generateBattingInfoId(playerId) : battingId);
         target.setPlayerId(playerId);
 
         target.setStatistics(getStatistics(source));
@@ -42,7 +44,7 @@ public class BattingDtoToDaoConverter implements Converter<BattingInfoDTO, Batti
 
     private BattingStatistics convertToDAOStatistics(StatisticsDTO dto, String playerId) {
         BattingStatistics statistics = new BattingStatistics();
-        statistics.setId(IdGenerationUtil.generateStatisticsIdForEachFormat(playerId, dto.getFormat().toString()));
+        statistics.setId(generateStatisticsIdForEachFormat(playerId, dto.getFormat().toString()));
         statistics.setFormat(dto.getFormat().toString());
         statistics.setMatches(dto.getMatches());
         statistics.setInnings(dto.getInnings());
