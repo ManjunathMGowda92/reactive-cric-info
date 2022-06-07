@@ -1,7 +1,15 @@
 package org.fourstack.reactivecricinfo.battinginfoservice.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.fourstack.reactivecricinfo.battinginfoservice.dto.BattingInfoDTO;
+import org.fourstack.reactivecricinfo.battinginfoservice.service.BattingInfoService;
+import org.springdoc.core.annotations.RouterOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 /**
  * RestController class which acts for the commands POST, PUT, DELETE and PATCH.
@@ -10,4 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/batting-info")
 public class BattingInfoCommandController {
+
+    @Autowired
+    private BattingInfoService service;
+    
+    @PostMapping
+    public Mono<BattingInfoDTO> createBattingInfo(@RequestBody BattingInfoDTO dto) {
+        return service.createBattingInfo(dto);
+    }
 }
