@@ -21,7 +21,33 @@ public class BattingInfoCommandController {
 
     @Autowired
     private BattingInfoService service;
-    
+
+    @Operation(
+            description = "Create Batting Info",
+            summary = "API method to Create Batting Info",
+            method = "POST",
+            tags = "BATTING-INFO-SERVICE :: COMMAND METHODS",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = BattingInfoDTO.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            content = @Content(
+                                    schema = @Schema(implementation = BattingInfoDTO.class)
+                            ),
+                            description = "BattingInfo Object created successfully"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            content = {@Content()},
+                            description = "Bad Request"
+                    )
+            }
+    )
     @PostMapping
     public Mono<BattingInfoDTO> createBattingInfo(@RequestBody BattingInfoDTO dto) {
         return service.createBattingInfo(dto);
