@@ -1,6 +1,7 @@
 package org.fourstack.reactivecricinfo.bowlinginfoservice.exception;
 
 public class BowlingDataNotFoundException extends RuntimeException {
+    public  static final long serialVersionUID = -2580136155402792152L;
 
     public BowlingDataNotFoundException() {
     }
