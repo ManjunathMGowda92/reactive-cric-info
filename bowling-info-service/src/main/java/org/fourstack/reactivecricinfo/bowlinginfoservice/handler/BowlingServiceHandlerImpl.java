@@ -33,12 +33,9 @@ public class BowlingServiceHandlerImpl implements BowlingServiceHandler {
 
     @Override
     public Mono<ServerResponse> fetchBowlingInfoByPlayerId(ServerRequest request) {
-        System.out.println("***********************************************************************************");
         String playerId = request.pathVariable("player-id");
-        System.out.println(playerId);
-
         return repository.findByPlayerId(playerId)
-                .switchIfEmpty(Mono.error(new BowlingDataNotFoundException("No BowlingInfo Found for the PlayerId: "+playerId)))
+                .switchIfEmpty(Mono.error(new BowlingDataNotFoundException("No BowlingInfo found for the PlayerId: "+playerId)))
                 .map(dao -> daoToDtoConverter.convert(dao, BowlingInfoDTO.class))
                 .flatMap(ServerResponse.ok() :: bodyValue);
     }
@@ -47,6 +44,7 @@ public class BowlingServiceHandlerImpl implements BowlingServiceHandler {
     public Mono<ServerResponse> fetchBowlingInfoById(ServerRequest request) {
         String id = request.pathVariable("id");
         return repository.findById(id)
+                .switchIfEmpty(Mono.error(new BowlingDataNotFoundException("No BowlingInfo found for the Id: "+id)))
                 .map(dao -> daoToDtoConverter.convert(dao, BowlingInfoDTO.class))
                 .flatMap(ServerResponse.ok() :: bodyValue);
     }
