@@ -54,6 +54,10 @@ public class PlayerProfile {
     @LastModifiedBy
     private String modifiedBy;
 
-    @Version
-    private Integer version;
+    // version will conflict for updating same document using the unique ID.
+    // It will be used in PUT and PATCH mapping, so that we need to render the
+    // version form the DB and increment it each time.
+
+    /*@Version
+    private Integer version;*/
 }
