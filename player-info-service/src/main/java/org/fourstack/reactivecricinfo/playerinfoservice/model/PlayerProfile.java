@@ -53,4 +53,7 @@ public class PlayerProfile {
 
     @LastModifiedBy
     private String modifiedBy;
+
+    @Version
+    private Integer version;
 }
