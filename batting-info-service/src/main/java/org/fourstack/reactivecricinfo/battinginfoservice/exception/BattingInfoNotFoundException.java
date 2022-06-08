@@ -1,7 +1,5 @@
 package org.fourstack.reactivecricinfo.battinginfoservice.exception;
 
-import java.io.Serial;
-
 public class BattingInfoNotFoundException extends RuntimeException {
     public  static final long serialVersionUID = 1811616344798716407L;
 
