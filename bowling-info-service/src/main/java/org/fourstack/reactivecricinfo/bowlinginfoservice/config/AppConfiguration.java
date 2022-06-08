@@ -1,5 +1,6 @@
 package org.fourstack.reactivecricinfo.bowlinginfoservice.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.ReactiveAuditorAware;
@@ -20,5 +21,12 @@ public class AppConfiguration {
         }*/
         String user = "SYSTEM";
         return () -> Mono.just(user);
+    }
+
+    @Bean
+    public ObjectMapper objectMapper(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+        return objectMapper;
     }
 }

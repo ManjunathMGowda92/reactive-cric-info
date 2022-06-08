@@ -37,3 +37,5 @@ spring:
       database: bowling-info-service
       port: 56650
 
+# TO overcome the conversion of LocalDate
+spring.jackson.serialization.write_dates_as_timestamps: false
