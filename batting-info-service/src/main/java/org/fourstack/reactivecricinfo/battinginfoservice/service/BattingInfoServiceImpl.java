@@ -17,6 +17,7 @@ public class BattingInfoServiceImpl implements BattingInfoService {
     @Autowired
     private ConversionService battingDaoToDtoConverter;
 
+    @Autowired
     private ConversionService battingDtoToDaoConverter;
 
     @Override
