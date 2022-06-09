@@ -1,0 +1,16 @@
+{
+  "firstName":"AB",
+  "lastName":"Villiers",
+  "middleName":"de",
+  "country":"South Africa",
+  "dob":"1984-02-17",
+  "placeOfBirth":"Pretoria",
+  "nickName":"ABD",
+  "gender":"MALE",
+  "roles":[
+    "BATSMAN",
+    "WICKET_KEEPER"
+  ],
+  "battingStyle":"RIGHT_HANDED_BATSMAN",
+  "bowlingStyle":"RIGHT_ARM_MEDIUM"
+}
