@@ -1,0 +1,18 @@
+{
+  "playerId":"SAC2022-6T8-15L23-9NPZ-50234200",
+  "basicInfo":{
+    "firstName":"Sachin",
+    "lastName":"Tendulkar",
+    "middleName":"Ramesh",
+    "country":"India",
+    "birthDate":"1973-04-24",
+    "birthPlace":"Mumbai",
+    "nickName":"Master Blaster",
+    "gender":"MALE"
+  },
+  "roles":[
+    "BATSMAN"
+  ],
+  "battingStyle":"RIGHT_HANDED_BATSMAN",
+  "bowlingStyle":"RIGHT_ARM_LEGBREAK"
+}
