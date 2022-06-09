@@ -158,4 +158,52 @@ public class ProfileInfoFlowTest {
                 .hasSize(1);
     }
 
+    @Test
+    public void testGetPlayersByBowlingStyleNotFound() {
+        String bowlingStyle = "ARM_ORTHODOX";
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/v1/player/bowling-style/{style}")
+                        .build(bowlingStyle)
+                ).exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody(ErrorResponse.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    assertEquals("No Player found for the Bowling Style :ARM_ORTHODOX", response.getErrorMsg());
+                    assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+                    assertEquals(404, response.getErrorCode());
+                });
+    }
+
+    @Test
+    public void testGetPlayersByBattingStyle() {
+        String battingStyle = "RIGHT_HANDED_BATSMAN";
+        webTestClient.get()
+                .uri("/api/v1/player/batting-style/{style}", battingStyle)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBodyList(PlayerInfoDTO.class)
+                .hasSize(3);
+    }
+
+    @Test
+    public void testGetPlayersByBattingStyleNotFound() {
+        String battingStyle = "NO_HANDED_BATSMAN";
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/v1/player/batting-style/{style}")
+                        .build(battingStyle)
+                ).exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody(ErrorResponse.class)
+                .consumeWith(result -> {
+                    var response = result.getResponseBody();
+                    assert response != null;
+                    assertEquals("No Player found for the Batting Style :NO_HANDED_BATSMAN", response.getErrorMsg());
+                    assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+                    assertEquals(404, response.getErrorCode());
+                });
+    }
 }
