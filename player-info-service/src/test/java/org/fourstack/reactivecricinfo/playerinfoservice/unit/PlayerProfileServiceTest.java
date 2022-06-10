@@ -2,6 +2,7 @@ package org.fourstack.reactivecricinfo.playerinfoservice.unit;
 
 import org.fourstack.reactivecricinfo.playerinfoservice.codetype.BattingStyleType;
 import org.fourstack.reactivecricinfo.playerinfoservice.codetype.BowlingStyleType;
+import org.fourstack.reactivecricinfo.playerinfoservice.codetype.GenderType;
 import org.fourstack.reactivecricinfo.playerinfoservice.dao.PlayerProfileRepository;
 import org.fourstack.reactivecricinfo.playerinfoservice.dto.PlayerInfoDTO;
 import org.fourstack.reactivecricinfo.playerinfoservice.exception.PlayerInfoNotFoundException;
@@ -41,6 +42,7 @@ public class PlayerProfileServiceTest {
     private PlayerProfileServiceImpl service;
 
     @Test
+    @DisplayName("PlayerProfileServiceTest: Get Player By Id.")
     public void testGetPlayerById() {
         String playerId = "VIR2022-6Y8-5P14-48SA-257223300";
 
@@ -108,6 +110,39 @@ public class PlayerProfileServiceTest {
         var playerFlux = service.getPlayersByCountry(country);
         StepVerifier.create(playerFlux)
                 .expectError(PlayerInfoNotFoundException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: Get players by Gender.")
+    public void testGetPlayersByGender() {
+        String gender = "MALE";
+        List<PlayerProfile> playerProfiles1 = playerProfiles.stream()
+                .filter(obj -> GenderType.valueOf(gender).equals(obj.getGender()))
+                .collect(Collectors.toList());
+
+        Mockito.when(playerRepository.findByGender(gender))
+                .thenReturn(Flux.fromIterable(playerProfiles1));
+        Mockito.when(profileToDtoConverter.convert(Mockito.any(PlayerProfile.class), Mockito.any()))
+                .thenReturn(playerInfoDTO);
+
+        var playerFlux = service.getPlayersByGender(gender);
+        StepVerifier.create(playerFlux)
+                .expectNextCount(playerProfiles1.size())
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerNotFoundException for getPlayersByGender")
+    public void testGetPlayersByGenderNotFound() {
+        String gender = "MALE";
+
+        Mockito.when(playerRepository.findByGender(gender))
+                .thenReturn(Flux.empty());
+
+        var playerFlux = service.getPlayersByGender(gender);
+        StepVerifier.create(playerFlux)
+                .expectErrorMatches(throwable -> throwable instanceof PlayerInfoNotFoundException)
                 .verify();
     }
 }
