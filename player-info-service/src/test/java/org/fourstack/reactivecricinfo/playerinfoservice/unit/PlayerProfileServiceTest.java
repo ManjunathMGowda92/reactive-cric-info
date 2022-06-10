@@ -96,4 +96,18 @@ public class PlayerProfileServiceTest {
                 .verifyComplete();
 
     }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerNotFoundException for getPlayersByCountry")
+    public void testGetPlayersByCountryNotFound() {
+        String country = "North Atlantic";
+
+        Mockito.when(playerRepository.findByCountry(country))
+                .thenReturn(Flux.empty());
+
+        var playerFlux = service.getPlayersByCountry(country);
+        StepVerifier.create(playerFlux)
+                .expectError(PlayerInfoNotFoundException.class)
+                .verify();
+    }
 }
