@@ -9,6 +9,7 @@ import org.fourstack.reactivecricinfo.playerinfoservice.model.PlayerProfile;
 import org.fourstack.reactivecricinfo.playerinfoservice.util.EntityGenerator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -45,6 +46,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
+    @DisplayName("ProfileInfoFlowTest: Get Player by playerId.")
     public void testGetProfileByPlayerId() {
         String playerId = "VIR2022-6Y8-5P14-48SA-257223300";
         webTestClient.get()
@@ -63,6 +65,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
+    @DisplayName("ProfileInfoFlowTest: getProfileByPlayerId[404_NOT_FOUND]")
     public void testGetProfileByPlayerIdNotFound() {
         String playerId = "1213-123-UYT-12";
         webTestClient.get()
@@ -80,6 +83,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
+    @DisplayName("ProfileInfoFlowTest: Get Player by Country")
     public void testGetPlayerProfilesByCountry() {
         String country = "India";
         webTestClient.get()
@@ -96,6 +100,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
+    @DisplayName("ProfileInfoFlowTest: getPlayerProfilesByCountry[404_NOT_FOUND]")
     public void testGetPlayerProfilesByCountryNotFound() {
         String country = "North Atlantic";
         webTestClient.get()
@@ -114,6 +119,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
+    @DisplayName("ProfileInfoFlowTest: Get Players by Gender")
     public void testGetPlayersByGender() {
         String gender = "MALE";
         webTestClient.get()
@@ -130,6 +136,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
+    @DisplayName("ProfileInfoFlowTest: getPlayersByGender[404_NOT_FOUND]")
     public void testGetPlayersByGenderNotFound() {
         String gender = "ABCD";
         webTestClient.get()
@@ -148,6 +155,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
+    @DisplayName("ProfileInfoFlowTest: Get Players by BowlingStyle.")
     public void testGetPlayersByBowlingStyle() {
         String bowlingStyle = "LEFT_ARM_ORTHODOX";
         webTestClient.get()
@@ -159,6 +167,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
+    @DisplayName("ProfileInfoFlowTest: getPlayersByBowlingStyle[404_NOT_FOUND]")
     public void testGetPlayersByBowlingStyleNotFound() {
         String bowlingStyle = "ARM_ORTHODOX";
         webTestClient.get()
@@ -178,6 +187,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
+    @DisplayName("ProfileInfoFlowTest: Get Players by Batting Style")
     public void testGetPlayersByBattingStyle() {
         String battingStyle = "RIGHT_HANDED_BATSMAN";
         webTestClient.get()
@@ -189,6 +199,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
+    @DisplayName("ProfileInfoFlowTest: getPlayersByBattingStyle[404_NOT_FOUND]")
     public void testGetPlayersByBattingStyleNotFound() {
         String battingStyle = "NO_HANDED_BATSMAN";
         webTestClient.get()
