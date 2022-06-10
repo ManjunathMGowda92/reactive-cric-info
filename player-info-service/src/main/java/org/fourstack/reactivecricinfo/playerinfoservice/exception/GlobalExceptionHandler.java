@@ -2,7 +2,6 @@ package org.fourstack.reactivecricinfo.playerinfoservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fourstack.reactivecricinfo.playerinfoservice.exception.model.ErrorResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,6 +9,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Slf4j
 @ControllerAdvice
@@ -21,14 +23,30 @@ public class GlobalExceptionHandler {
         log.error("PlayerInfoNotFoundException caught : {}", exception.getMessage());
 
         ErrorResponse response = ErrorResponse.builder()
-                .errorCode(HttpStatus.NOT_FOUND.value())
+                .errorCode(NOT_FOUND.value())
                 .errorMsg(exception.getMessage())
-                .status(HttpStatus.NOT_FOUND)
+                .status(NOT_FOUND)
                 .urlDetails(request.getPath().value())
                 .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
                 .build();
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(NOT_FOUND)
+                .body(response);
+    }
+
+    @ExceptionHandler(PlayerServiceException.class)
+    public ResponseEntity<ErrorResponse> handlePlayerServiceException(
+            PlayerServiceException exception, ServerHttpRequest request) {
+        log.error("PlayerServiceException caught : {}", exception.getMessage());
+
+        ErrorResponse response = ErrorResponse.builder()
+                .errorMsg(exception.getMessage())
+                .errorCode(INTERNAL_SERVER_ERROR.value())
+                .status(INTERNAL_SERVER_ERROR)
+                .urlDetails(request.getPath().value())
+                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
+                .build();
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(response);
     }
 }
