@@ -1,5 +1,7 @@
 package org.fourstack.reactivecricinfo.playerinfoservice.unit;
 
+import org.fourstack.reactivecricinfo.playerinfoservice.codetype.BattingStyleType;
+import org.fourstack.reactivecricinfo.playerinfoservice.codetype.BowlingStyleType;
 import org.fourstack.reactivecricinfo.playerinfoservice.dao.PlayerProfileRepository;
 import org.fourstack.reactivecricinfo.playerinfoservice.dto.PlayerInfoDTO;
 import org.fourstack.reactivecricinfo.playerinfoservice.exception.PlayerInfoNotFoundException;
@@ -19,6 +21,8 @@ import reactor.test.StepVerifier;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class PlayerProfileServiceTest {
@@ -42,12 +46,19 @@ public class PlayerProfileServiceTest {
 
         Mockito.when(playerRepository.findById(playerId))
                 .thenReturn(Mono.just(playerProfile));
-
         Mockito.when(profileToDtoConverter.convert(playerProfile, PlayerInfoDTO.class))
                 .thenReturn(playerInfoDTO);
 
         Mono<PlayerInfoDTO> playerDTO = service.getPlayerById(playerId);
-        assert playerDTO != null;
+
+        StepVerifier.create(playerDTO)
+                .assertNext(dto -> {
+                            assert dto != null;
+                            assertEquals(BattingStyleType.RIGHT_HANDED_BATSMAN, dto.getBattingStyle());
+                            assertEquals(BowlingStyleType.RIGHT_ARM_LEGBREAK, dto.getBowlingStyle());
+                            assertEquals("India", dto.getBasicInfo().getCountry());
+                        }
+                ).verifyComplete();
 
         //verify the method calls
         Mockito.verify(playerRepository, Mockito.times(1))
