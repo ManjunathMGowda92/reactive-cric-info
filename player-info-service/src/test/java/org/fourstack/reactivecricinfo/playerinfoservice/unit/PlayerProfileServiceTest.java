@@ -81,6 +81,18 @@ public class PlayerProfileServiceTest {
     }
 
     @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerServiceException for getPlayerById")
+    public void testGetPlayerByIdPlayerServiceException() {
+        String playerId = "VIR2022-6Y8-5P14-48SA-257223300";
+        Mockito.when(playerRepository.findById(playerId))
+                .thenReturn(Mono.error(new RuntimeException("DAOException: Fetch by playerId")));
+        var playerMono = service.getPlayerById(playerId);
+        StepVerifier.create(playerMono)
+                .expectError(PlayerServiceException.class)
+                .verify();
+    }
+
+    @Test
     @DisplayName("PlayerProfileServiceTest: Get Players by country")
     public void testGetPlayersByCountry() {
         String country = "India";
@@ -111,6 +123,18 @@ public class PlayerProfileServiceTest {
         var playerFlux = service.getPlayersByCountry(country);
         StepVerifier.create(playerFlux)
                 .expectError(PlayerInfoNotFoundException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerServiceException for getPlayersByCountry")
+    public void testGetPlayersByCountryPlayerServiceException() {
+        String country = "Nameless Country";
+        Mockito.when(playerRepository.findByCountry(country))
+                .thenReturn(Flux.error(new Throwable("Exception while fetch using country name")));
+        var playersFlux = service.getPlayersByCountry(country);
+        StepVerifier.create(playersFlux)
+                .expectErrorMessage("Exception while fetch using country name")
                 .verify();
     }
 
@@ -148,6 +172,18 @@ public class PlayerProfileServiceTest {
     }
 
     @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerServiceException for getPlayersByGender")
+    public void testGetPlayersByGenderPlayerServiceException() {
+        String gender = "MALE";
+        Mockito.when(playerRepository.findByGender(gender))
+                .thenReturn(Flux.error(new Exception("Exception occurred while fetching data")));
+        var playersFlux = service.getPlayersByGender(gender);
+        StepVerifier.create(playersFlux)
+                .expectErrorMatches(throwable -> throwable instanceof  PlayerServiceException)
+                .verify();
+    }
+
+    @Test
     @DisplayName("PlayerProfileServiceTest: Get players by Batting Style")
     public void testGetPlayersByBattingStyle() {
         String battingStyle = "RIGHT_HANDED_BATSMAN";
@@ -177,6 +213,19 @@ public class PlayerProfileServiceTest {
         var playersFlux = service.getPlayersByBattingStyle(battingStyle);
         StepVerifier.create(playersFlux)
                 .expectError(PlayerInfoNotFoundException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerServiceException for getPlayersByBattingStyle")
+    public void testGetPlayersByBattingStyleForPlayerServiceException(){
+        String battingStyle = "RIGHT_HANDED_BATSMAN";
+        Mockito.when(playerRepository.findByBattingStyle(battingStyle))
+                .thenReturn(Flux.error(new Exception("Exception from DAO layer")));
+
+        var playersFlux = service.getPlayersByBattingStyle(battingStyle);
+        StepVerifier.create(playersFlux)
+                .expectError(PlayerServiceException.class)
                 .verify();
     }
 
@@ -217,7 +266,7 @@ public class PlayerProfileServiceTest {
     public void testGetPlayersByBowlingStyleForPlayerServiceException() {
         String bowlingStyle = "RIGHT_ARM_LEGBREAK";
         Mockito.when(playerRepository.findByBowlingStyle(bowlingStyle))
-                .thenReturn(Flux.error(new RuntimeException("asdsdads")));
+                .thenReturn(Flux.error(new RuntimeException("Unknown Exception occurred.")));
 
         var playersFlux = service.getPlayersByBowlingStyle(bowlingStyle);
         StepVerifier.create(playersFlux)
