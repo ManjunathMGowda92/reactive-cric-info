@@ -4,10 +4,7 @@ import org.fourstack.reactivecricinfo.playerinfoservice.codetype.BowlingStyleTyp
 import org.fourstack.reactivecricinfo.playerinfoservice.dao.PlayerProfileRepository;
 import org.fourstack.reactivecricinfo.playerinfoservice.model.PlayerProfile;
 import org.fourstack.reactivecricinfo.playerinfoservice.util.EntityGenerator;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,6 +31,7 @@ public class PlayerProfileRepositoryTest {
     }
 
     @Test
+    @DisplayName("PlayerProfileRepositoryTest: find all players")
     public void testFindAll() {
         var daoObjFlux = repository.findAll();
         StepVerifier.create(daoObjFlux)
@@ -42,6 +40,7 @@ public class PlayerProfileRepositoryTest {
     }
 
     @Test
+    @DisplayName("PlayerProfileRepositoryTest: find player by Id")
     public void testFindById() {
         String id = "SAC2022-6T8-15L23-9NPZ-50234200";
         var playerDao = repository.findById(id);
@@ -56,6 +55,7 @@ public class PlayerProfileRepositoryTest {
     }
 
     @Test
+    @DisplayName("PlayerProfileRepositoryTest: find players by country")
     public void testFindPlayersByCountry() {
         String country = "India";
         var daoFlux = repository.findByCountry(country);
@@ -66,6 +66,7 @@ public class PlayerProfileRepositoryTest {
     }
 
     @Test
+    @DisplayName("PlayerProfileRepositoryTest: find players by gender")
     public void testFindByGender() {
         String gender = "MALE";
         var daoFlux = repository.findByGender(gender);
@@ -75,6 +76,7 @@ public class PlayerProfileRepositoryTest {
     }
 
     @Test
+    @DisplayName("PlayerProfileRepositoryTest: find players by Batting Style")
     public void testFindByBattingStyle() {
         String battingStyle = "RIGHT_HANDED_BATSMAN";
         var daoFlux = repository.findByBattingStyle(battingStyle);
@@ -84,6 +86,7 @@ public class PlayerProfileRepositoryTest {
     }
 
     @Test
+    @DisplayName("PlayerProfileRepositoryTest: find players by Bowling Style")
     public void testFindByBowlingStyle() {
         String bowlingStyle = "LEFT_ARM_ORTHODOX";
         var daoFlux = repository.findByBowlingStyle(bowlingStyle);
@@ -93,6 +96,7 @@ public class PlayerProfileRepositoryTest {
     }
 
     @Test
+    @DisplayName("PlayerProfileRepositoryTest: Save PlayerProfile to DB")
     public void testSave() {
         PlayerProfile playerProfile = EntityGenerator.getPlayerProfile();
         var daoPlayerProfile = repository.save(playerProfile);
