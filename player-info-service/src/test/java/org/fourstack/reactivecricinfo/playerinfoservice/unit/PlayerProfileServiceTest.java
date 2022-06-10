@@ -6,6 +6,7 @@ import org.fourstack.reactivecricinfo.playerinfoservice.codetype.GenderType;
 import org.fourstack.reactivecricinfo.playerinfoservice.dao.PlayerProfileRepository;
 import org.fourstack.reactivecricinfo.playerinfoservice.dto.PlayerInfoDTO;
 import org.fourstack.reactivecricinfo.playerinfoservice.exception.PlayerInfoNotFoundException;
+import org.fourstack.reactivecricinfo.playerinfoservice.exception.PlayerServiceException;
 import org.fourstack.reactivecricinfo.playerinfoservice.model.PlayerProfile;
 import org.fourstack.reactivecricinfo.playerinfoservice.service.PlayerProfileServiceImpl;
 import org.fourstack.reactivecricinfo.playerinfoservice.util.EntityGenerator;
@@ -143,6 +144,84 @@ public class PlayerProfileServiceTest {
         var playerFlux = service.getPlayersByGender(gender);
         StepVerifier.create(playerFlux)
                 .expectErrorMatches(throwable -> throwable instanceof PlayerInfoNotFoundException)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: Get players by Batting Style")
+    public void testGetPlayersByBattingStyle() {
+        String battingStyle = "RIGHT_HANDED_BATSMAN";
+        List<PlayerProfile> playerProfiles1 = playerProfiles.stream()
+                .filter(obj -> BattingStyleType.RIGHT_HANDED_BATSMAN.equals(obj.getBattingStyle()))
+                .collect(Collectors.toList());
+
+        Mockito.when(playerRepository.findByBattingStyle(battingStyle))
+                .thenReturn(Flux.fromIterable(playerProfiles1));
+        Mockito.when(profileToDtoConverter.convert(Mockito.any(PlayerProfile.class), Mockito.any()))
+                .thenReturn(playerInfoDTO);
+
+        var playerFlux = service.getPlayersByBattingStyle(battingStyle);
+        StepVerifier.create(playerFlux)
+                .expectNextCount(playerProfiles1.size())
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerNotFoundException for getPlayersByBattingStyle")
+    public void testGetPlayersByBattingStyleNotFound() {
+        String battingStyle = "RIGHT_HANDED_BATSMAN";
+
+        Mockito.when(playerRepository.findByBattingStyle(battingStyle))
+                .thenReturn(Flux.empty());
+
+        var playersFlux = service.getPlayersByBattingStyle(battingStyle);
+        StepVerifier.create(playersFlux)
+                .expectError(PlayerInfoNotFoundException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: Get players by Bowling Style")
+    public void testGetPlayersByBowlingStyle() {
+        String bowlingStyle = "RIGHT_ARM_LEGBREAK";
+        List<PlayerProfile> playerProfiles1 = playerProfiles.stream()
+                .filter(obj -> BowlingStyleType.RIGHT_ARM_LEGBREAK.equals(obj.getBowlingStyle()))
+                .collect(Collectors.toList());
+
+        Mockito.when(playerRepository.findByBowlingStyle(bowlingStyle))
+                .thenReturn(Flux.fromIterable(playerProfiles1));
+        Mockito.when(profileToDtoConverter.convert(Mockito.any(PlayerProfile.class), Mockito.any()))
+                .thenReturn(playerInfoDTO);
+
+        var playersFlux = service.getPlayersByBowlingStyle(bowlingStyle);
+        StepVerifier.create(playersFlux)
+                .expectNextCount(playerProfiles1.size())
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerNotFoundException for getPlayersByBowlingStyle")
+    public void testGetPlayersByBowlingStyleNotFound() {
+        String bowlingStyle = "RIGHT_ARM_LEGBREAK";
+        Mockito.when(playerRepository.findByBowlingStyle(bowlingStyle))
+                .thenReturn(Flux.empty());
+
+        var playersFlux = service.getPlayersByBowlingStyle(bowlingStyle);
+        StepVerifier.create(playersFlux)
+                .expectErrorMatches(throwable -> throwable instanceof PlayerInfoNotFoundException)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerServiceException for getPlayersByBowlingStyle")
+    public void testGetPlayersByBowlingStyleForPlayerServiceException() {
+        String bowlingStyle = "RIGHT_ARM_LEGBREAK";
+        Mockito.when(playerRepository.findByBowlingStyle(bowlingStyle))
+                .thenReturn(Flux.error(new RuntimeException("asdsdads")));
+
+        var playersFlux = service.getPlayersByBowlingStyle(bowlingStyle);
+        StepVerifier.create(playersFlux)
+                .expectError(PlayerServiceException.class)
                 .verify();
     }
 }

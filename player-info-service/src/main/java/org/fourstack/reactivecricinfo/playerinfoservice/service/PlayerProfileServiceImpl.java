@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.fourstack.reactivecricinfo.playerinfoservice.dao.PlayerProfileRepository;
 import org.fourstack.reactivecricinfo.playerinfoservice.dto.PlayerInfoDTO;
 import org.fourstack.reactivecricinfo.playerinfoservice.exception.PlayerInfoNotFoundException;
+import org.fourstack.reactivecricinfo.playerinfoservice.exception.PlayerServiceException;
 import org.fourstack.reactivecricinfo.playerinfoservice.model.PlayerProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -34,7 +35,11 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     public Mono<PlayerInfoDTO> getPlayerById(String playerId) {
         return playerRepository
                 .findById(playerId)
-                .switchIfEmpty(
+                .onErrorResume(err -> {
+                            log.error("PlayerProfileService: getPlayerById - {}", err.getMessage());
+                            return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
+                        }
+                ).switchIfEmpty(
                         generateError("No Player Details found for the playerId: ", playerId)
                 ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
@@ -53,7 +58,10 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     public Flux<PlayerInfoDTO> getPlayersByCountry(String country) {
         return playerRepository
                 .findByCountry(country)
-                .switchIfEmpty(
+                .onErrorResume(err -> {
+                    log.error("PlayerProfileService: getPlayersByCountry - {}", err.getMessage());
+                    return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
+                }).switchIfEmpty(
                         generateError("No Player found for the Country :", country)
                 ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
@@ -68,7 +76,11 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     public Flux<PlayerInfoDTO> getPlayersByGender(String gender) {
         return playerRepository
                 .findByGender(gender)
-                .switchIfEmpty(
+                .onErrorResume(err -> {
+                            log.error("PlayerProfileService: getPlayersByGender - {}", err.getMessage());
+                            return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
+                        }
+                ).switchIfEmpty(
                         generateError("No Player found for the Gender :", gender)
                 ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
@@ -83,7 +95,11 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     public Flux<PlayerInfoDTO> getPlayersByBattingStyle(String battingStyle) {
         return playerRepository
                 .findByBattingStyle(battingStyle)
-                .switchIfEmpty(generateError("No Player found for the Batting Style :", battingStyle))
+                .onErrorResume(err -> {
+                            log.error("PlayerProfileService: getPlayersByBattingStyle - {}", err.getMessage());
+                            return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
+                        }
+                ).switchIfEmpty(generateError("No Player found for the Batting Style :", battingStyle))
                 .map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
@@ -97,7 +113,11 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
     public Flux<PlayerInfoDTO> getPlayersByBowlingStyle(String bowlingStyle) {
         return playerRepository
                 .findByBowlingStyle(bowlingStyle)
-                .switchIfEmpty(generateError("No Player found for the Bowling Style :", bowlingStyle))
+                .onErrorResume(err -> {
+                            log.error("PlayerProfileService: getPlayersByBowlingStyle - ", err);
+                            return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
+                        }
+                ).switchIfEmpty(generateError("No Player found for the Bowling Style :", bowlingStyle))
                 .map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
@@ -107,7 +127,11 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
         var playerProfile = playerDtoToProfileConverter.convert(dto, PlayerProfile.class);
 
         return playerRepository.save(playerProfile)
-                .map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
+                .onErrorResume(err -> {
+                            log.error("PlayerProfileService: createPlayerProfile - {}", err.getMessage());
+                            return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
+                        }
+                ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
 }
