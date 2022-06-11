@@ -39,6 +39,9 @@ public class PlayerProfileServiceTest {
     @Mock
     private ConversionService profileToDtoConverter;
 
+    @Mock
+    private ConversionService playerDtoToProfileConverter;
+
     @InjectMocks
     private PlayerProfileServiceImpl service;
 
@@ -270,6 +273,47 @@ public class PlayerProfileServiceTest {
 
         var playersFlux = service.getPlayersByBowlingStyle(bowlingStyle);
         StepVerifier.create(playersFlux)
+                .expectError(PlayerServiceException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: Create Player Profile.")
+    public void testCreatePlayerProfile() {
+        PlayerProfile playerProfile1 = EntityGenerator.getPlayerProfile();
+        playerProfile1.setPlayerId(null);
+
+        // Mock PlayerDTO to PlayerProfile Converter
+        Mockito.when(playerDtoToProfileConverter.convert(Mockito.any(PlayerInfoDTO.class), Mockito.any()))
+                .thenReturn(playerProfile1);
+        // Mock Repository Call
+        Mockito.when(playerRepository.save(playerProfile1))
+                .thenReturn(Mono.just(playerProfile));
+        // Mock PlayerProfile to PlayerDTO
+        Mockito.when(profileToDtoConverter.convert(Mockito.any(PlayerProfile.class), Mockito.any()))
+                .thenReturn(playerInfoDTO);
+
+        var savedObj = service.createPlayerProfile(playerInfoDTO);
+        StepVerifier.create(savedObj)
+                .expectNext(playerInfoDTO)
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerServiceException for createPlayerProfile")
+    public void testCreatePlayerProfilePlayerServiceException() {
+        PlayerProfile playerProfile1 = EntityGenerator.getPlayerProfile();
+        playerProfile1.setPlayerId(null);
+
+        // Mock PlayerDTO to PlayerProfile Converter
+        Mockito.when(playerDtoToProfileConverter.convert(Mockito.any(PlayerInfoDTO.class), Mockito.any()))
+                .thenReturn(playerProfile1);
+        // Mock Repository Call
+        Mockito.when(playerRepository.save(playerProfile1))
+                .thenReturn(Mono.error(new RuntimeException("Exception while creating Object.")));
+
+        var dtoMono = service.createPlayerProfile(playerInfoDTO);
+        StepVerifier.create(dtoMono)
                 .expectError(PlayerServiceException.class)
                 .verify();
     }

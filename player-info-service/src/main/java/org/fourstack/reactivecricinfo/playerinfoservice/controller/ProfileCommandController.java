@@ -58,7 +58,7 @@ public class ProfileCommandController {
 
         /*
         either we need to explicitly subscribe or do the return.
-        If we return then Webflux itself will subscribe for the data
+        If we return then Web flux itself will subscribe for the data
          */
         return playerService.createPlayerProfile(profileDto);
     }
