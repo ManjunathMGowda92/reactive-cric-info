@@ -1,7 +1,6 @@
 package org.fourstack.reactivecricinfo.playerinfoservice.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.fourstack.reactivecricinfo.playerinfoservice.dao.PlayerProfileRepository;
 import org.fourstack.reactivecricinfo.playerinfoservice.dto.PlayerInfoDTO;
 import org.fourstack.reactivecricinfo.playerinfoservice.service.PlayerProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,6 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/v1")
 @Slf4j
 public class ProfileQueryController {
-
-    @Autowired
-    PlayerProfileRepository repository;
 
     @Autowired
     private PlayerProfileService playerService;

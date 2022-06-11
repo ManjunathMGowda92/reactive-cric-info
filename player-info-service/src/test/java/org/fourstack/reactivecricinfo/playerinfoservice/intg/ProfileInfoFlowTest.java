@@ -21,6 +21,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -215,6 +216,26 @@ public class ProfileInfoFlowTest {
                     assertEquals("No Player found for the Batting Style :NO_HANDED_BATSMAN", response.getErrorMsg());
                     assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
                     assertEquals(404, response.getErrorCode());
+                });
+    }
+
+    @Test
+    @DisplayName("ProfileInfoFlowTest: Create Player Profile")
+    public void testCreatePlayerProfile() {
+        PlayerInfoDTO playerInfoDTO = EntityGenerator.getPlayerInfoDTO();
+        playerInfoDTO.setPlayerId(null);
+
+        webTestClient.post()
+                .uri("/api/v1/player")
+                .bodyValue(playerInfoDTO)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(PlayerInfoDTO.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+
+                    assertNotNull(response.getPlayerId());
                 });
     }
 }
