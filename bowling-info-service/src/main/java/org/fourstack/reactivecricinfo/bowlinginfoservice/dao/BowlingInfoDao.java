@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface BowlingInfoDao extends ReactiveMongoRepository<BowlingInfo, String> {
     Mono<BowlingInfo> findByPlayerId(String playerId);
+    Mono<Void> deleteByPlayerId(String playerId);
 }
