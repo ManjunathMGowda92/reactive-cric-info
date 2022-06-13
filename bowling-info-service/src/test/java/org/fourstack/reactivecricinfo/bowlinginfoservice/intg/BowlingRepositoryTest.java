@@ -53,4 +53,44 @@ public class BowlingRepositoryTest {
                     assertEquals(3, daoObj.getStatistics().size());
                 });
     }
+
+    @Test
+    @DisplayName("BowlingRepositoryTest: Create Bowling Info")
+    public void testCreateBowlingInfo() {
+        var daoObj = EntityGenerator.bowlingInfoDAO();
+        daoObj.setBowlingId(null);
+        var savedObj = dao.save(daoObj);
+        StepVerifier.create(savedObj)
+                        .assertNext(obj -> {
+                            assert obj != null;
+                            assertNotNull(obj.getBowlingId());
+                            assertEquals("SAC2022-6T8-15L23-9NPZ-50234200", obj.getPlayerId());
+                            assertEquals(3, obj.getStatistics().size());
+                        });
+    }
+
+    @Test
+    @DisplayName("BowlingRepositoryTest: Delete BowlingInfo by Id.")
+    public void testDeleteById() {
+        var returnedObj = dao.deleteById("BOWLSAC2022-6T8-15L23-9NPZ-50234200");
+
+        // As deleteById method returns just Mono<Void> use verifyComplete() to verify it.
+        StepVerifier.create(returnedObj)
+                .verifyComplete();
+    }
+
+    @Test
+    public void testDeleteByPlayerId() {
+        String playerId = "SAC2022-6T8-15L23-9NPZ-50234200";
+
+        // block method is used to delete the dao Object, otherwise it
+        // will return the object in the next call (as it is async call).
+        dao.deleteByPlayerId(playerId).block();
+
+        // Check if the BowlingInfo Exists.
+        var daoObj = dao.findByPlayerId(playerId);
+
+        StepVerifier.create(daoObj)
+                .verifyComplete();
+    }
 }
