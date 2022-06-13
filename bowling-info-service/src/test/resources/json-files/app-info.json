@@ -1,0 +1,27 @@
+{
+  "appName": "bowling-info-service",
+  "appVersion": "1.0.0",
+  "appDescription": "Application holds the bowler related information.",
+  "endpoints": [
+    {
+      "methodType": "GET",
+      "endpoint": "/api/v1/info",
+      "summary": "Basic Information about the Application."
+    },
+    {
+      "methodType": "GET",
+      "endpoint": "/api/v1/bowling-info/by-player-id/{player-id}",
+      "summary": "API to fetch Bowling statistics by Player Id."
+    },
+    {
+      "methodType": "GET",
+      "endpoint": "/api/v1/bowling-info/{id}",
+      "summary": "API to fetch Bowling statistics by Id."
+    },
+    {
+      "methodType": "GET",
+      "endpoint": "/api/v1/bowling-info",
+      "summary": "API to save Bowling statistics to Database."
+    }
+  ]
+}
