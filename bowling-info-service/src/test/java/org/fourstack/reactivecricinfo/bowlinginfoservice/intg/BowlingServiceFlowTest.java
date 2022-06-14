@@ -48,4 +48,21 @@ public class BowlingServiceFlowTest {
                     Assertions.assertEquals(3, response.getBowlingStatistics().size());
                 });
     }
+
+    @Test
+    @DisplayName("BowlingServiceFlowTest: Get BowlingInfo by Id")
+    public void testGetBowlingInfoById() {
+        String id = "BOWLSAC2022-6T8-15L23-9NPZ-50234200";
+        webClient.get()
+                .uri("/api/v1/bowling-info/{id}", id)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(BowlingInfoDTO.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    Assertions.assertEquals("SAC2022-6T8-15L23-9NPZ-50234200", response.getPlayerId());
+                    Assertions.assertEquals(3, response.getBowlingStatistics().size());
+                });
+    }
 }
