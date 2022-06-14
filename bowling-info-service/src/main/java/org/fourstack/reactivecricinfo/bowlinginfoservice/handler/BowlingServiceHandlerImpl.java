@@ -1,12 +1,11 @@
 package org.fourstack.reactivecricinfo.bowlinginfoservice.handler;
 
-import org.fourstack.reactivecricinfo.bowlinginfoservice.codetype.CricketFormat;
+import lombok.extern.slf4j.Slf4j;
 import org.fourstack.reactivecricinfo.bowlinginfoservice.dao.BowlingInfoDao;
 import org.fourstack.reactivecricinfo.bowlinginfoservice.dto.BowlingInfoDTO;
 import org.fourstack.reactivecricinfo.bowlinginfoservice.exception.BowlingDataNotFoundException;
+import org.fourstack.reactivecricinfo.bowlinginfoservice.exception.BowlingServiceException;
 import org.fourstack.reactivecricinfo.bowlinginfoservice.model.BowlingInfo;
-import org.fourstack.reactivecricinfo.bowlinginfoservice.model.BowlingStatistics;
-import org.fourstack.reactivecricinfo.bowlinginfoservice.util.IdGenerationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
@@ -15,10 +14,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
+@Slf4j
 public class BowlingServiceHandlerImpl implements BowlingServiceHandler {
 
     @Autowired
@@ -35,18 +32,28 @@ public class BowlingServiceHandlerImpl implements BowlingServiceHandler {
     public Mono<ServerResponse> fetchBowlingInfoByPlayerId(ServerRequest request) {
         String playerId = request.pathVariable("player-id");
         return repository.findByPlayerId(playerId)
-                .switchIfEmpty(Mono.error(new BowlingDataNotFoundException("No BowlingInfo found for the PlayerId: "+playerId)))
+                .onErrorResume(err -> {
+                            log.error("Error in BowlingServiceHandlerImpl.fetchBowlingInfoByPlayerId() - {}",
+                                    err.getMessage(), err);
+                            return Mono.error(new BowlingServiceException(err.getMessage(), err.getCause()));
+                        }
+                ).switchIfEmpty(Mono.error(new BowlingDataNotFoundException("No BowlingInfo found for the PlayerId: " + playerId)))
                 .map(dao -> daoToDtoConverter.convert(dao, BowlingInfoDTO.class))
-                .flatMap(ServerResponse.ok() :: bodyValue);
+                .flatMap(ServerResponse.ok()::bodyValue);
     }
 
     @Override
     public Mono<ServerResponse> fetchBowlingInfoById(ServerRequest request) {
         String id = request.pathVariable("id");
         return repository.findById(id)
-                .switchIfEmpty(Mono.error(new BowlingDataNotFoundException("No BowlingInfo found for the Id: "+id)))
+                .onErrorResume(err -> {
+                            log.error("Error in BowlingServiceHandlerImpl.fetchBowlingInfoById() - {}",
+                                    err.getMessage(), err);
+                            return Mono.error(new BowlingServiceException(err.getMessage(), err.getCause()));
+                        }
+                ).switchIfEmpty(Mono.error(new BowlingDataNotFoundException("No BowlingInfo found for the Id: " + id)))
                 .map(dao -> daoToDtoConverter.convert(dao, BowlingInfoDTO.class))
-                .flatMap(ServerResponse.ok() :: bodyValue);
+                .flatMap(ServerResponse.ok()::bodyValue);
     }
 
     @Override
@@ -57,6 +64,11 @@ public class BowlingServiceHandlerImpl implements BowlingServiceHandler {
                 .map(dto -> dtoToDaoConverter.convert(dto, BowlingInfo.class))
                 .flatMap(repository::save)
                 .map(dao -> daoToDtoConverter.convert(dao, BowlingInfoDTO.class))
-                .flatMap(ServerResponse.status(HttpStatus.CREATED)::bodyValue);
+                .flatMap(ServerResponse.status(HttpStatus.CREATED)::bodyValue)
+                .onErrorResume(err -> {
+                    log.error("Error in BowlingServiceHandlerImpl.createBowlingInfo() - {}",
+                            err.getMessage(), err);
+                    return Mono.error(new BowlingServiceException(err.getMessage(), err.getCause()));
+                });
     }
 }
