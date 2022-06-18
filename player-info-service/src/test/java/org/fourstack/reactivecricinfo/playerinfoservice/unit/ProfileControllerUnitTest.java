@@ -3,16 +3,21 @@ package org.fourstack.reactivecricinfo.playerinfoservice.unit;
 import org.fourstack.reactivecricinfo.playerinfoservice.codetype.BattingStyleType;
 import org.fourstack.reactivecricinfo.playerinfoservice.codetype.BowlingStyleType;
 import org.fourstack.reactivecricinfo.playerinfoservice.codetype.GenderType;
+import org.fourstack.reactivecricinfo.playerinfoservice.controller.ProfileCommandController;
+import org.fourstack.reactivecricinfo.playerinfoservice.controller.ProfileQueryController;
 import org.fourstack.reactivecricinfo.playerinfoservice.dto.PlayerInfoDTO;
+import org.fourstack.reactivecricinfo.playerinfoservice.exception.GlobalExceptionHandler;
 import org.fourstack.reactivecricinfo.playerinfoservice.service.PlayerProfileService;
+import org.fourstack.reactivecricinfo.playerinfoservice.service.PlayerProfileServiceImpl;
 import org.fourstack.reactivecricinfo.playerinfoservice.util.EntityGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,8 +27,10 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-//@WebFluxTest(controllers = {ProfileQueryController.class, ProfileCommandController.class})
+@WebFluxTest
+@ContextConfiguration(classes = {ProfileCommandController.class, ProfileQueryController.class,
+        GlobalExceptionHandler.class, PlayerProfileServiceImpl.class, PlayerProfileService.class,
+})
 @AutoConfigureWebTestClient
 public class ProfileControllerUnitTest {
     List<PlayerInfoDTO> playerDTOList = EntityGenerator.getPlayerDTOList();

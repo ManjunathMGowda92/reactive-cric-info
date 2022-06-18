@@ -37,9 +37,14 @@ public class BowlingServiceHandlerImpl implements BowlingServiceHandler {
                                     err.getMessage(), err);
                             return Mono.error(new BowlingServiceException(err.getMessage(), err.getCause()));
                         }
-                ).switchIfEmpty(Mono.error(new BowlingDataNotFoundException("No BowlingInfo found for the PlayerId: " + playerId)))
+                ).switchIfEmpty(generateError("No BowlingInfo found for the PlayerId: ", playerId))
                 .map(dao -> daoToDtoConverter.convert(dao, BowlingInfoDTO.class))
                 .flatMap(ServerResponse.ok()::bodyValue);
+    }
+
+    private Mono<BowlingInfo> generateError(String message, String concatStr) {
+        log.info("Creating BowlingDataNotFoundException .......");
+        return Mono.error(new BowlingDataNotFoundException(message + concatStr));
     }
 
     @Override
@@ -51,7 +56,7 @@ public class BowlingServiceHandlerImpl implements BowlingServiceHandler {
                                     err.getMessage(), err);
                             return Mono.error(new BowlingServiceException(err.getMessage(), err.getCause()));
                         }
-                ).switchIfEmpty(Mono.error(new BowlingDataNotFoundException("No BowlingInfo found for the Id: " + id)))
+                ).switchIfEmpty(generateError("No BowlingInfo found for the Id: ", id))
                 .map(dao -> daoToDtoConverter.convert(dao, BowlingInfoDTO.class))
                 .flatMap(ServerResponse.ok()::bodyValue);
     }
