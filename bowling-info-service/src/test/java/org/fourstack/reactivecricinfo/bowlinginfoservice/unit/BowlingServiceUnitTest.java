@@ -62,7 +62,7 @@ public class BowlingServiceUnitTest {
     }
 
     @Test
-    @DisplayName("BowlingServiceHandlerTest: BowlingInfoNotFoundException Test")
+    @DisplayName("BowlingServiceHandlerTest: BowlingInfoNotFoundException Test for PlayerId")
     public void testFetchBowlingInfoByPlayerIdForNotFoundException() {
         Mockito.when(dao.findByPlayerId(Mockito.anyString()))
                 .thenReturn(Mono.empty());
@@ -82,7 +82,7 @@ public class BowlingServiceUnitTest {
     }
 
     @Test
-    @DisplayName("BowlingServiceHandlerTest: BowlingServiceException Test")
+    @DisplayName("BowlingServiceHandlerTest: BowlingServiceException Test for PlayerId")
     public void testFetchBowlingInfoByPlayerIdServiceException() {
         Mockito.when(dao.findByPlayerId(Mockito.anyString()))
                 .thenThrow(new RuntimeException("Accessing the DAO illegally"));
@@ -119,6 +119,48 @@ public class BowlingServiceUnitTest {
                     assert response != null;
                     assertEquals(playerId, response.getPlayerId());
                     assertEquals(3, response.getBowlingStatistics().size());
+                });
+    }
+
+    @Test
+    @DisplayName("BowlingServiceHandlerTest: BowlingNoTFoundException for Id")
+    public void testFetchBowlingInfoByIdNotFoundException() {
+        Mockito.when(dao.findById(Mockito.anyString()))
+                .thenReturn(Mono.empty());
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/api/v1/bowling-info/{id}")
+                        .build("test-id")
+                ).exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody(ErrorResponse.class)
+                .consumeWith(exchangeResult -> {
+                    var errResponse = exchangeResult.getResponseBody();
+                    assert errResponse != null;
+                    assertEquals(404, errResponse.getErrorCode());
+                    assertEquals(NOT_FOUND, errResponse.getStatus());
+                });
+    }
+
+    @Test
+    @DisplayName("BowlingServiceHandlerTest: BowlingServiceException Test for Id")
+    public void testFetchBowlingInfoByIdServiceException() {
+        Mockito.when(dao.findById(Mockito.anyString()))
+                .thenThrow(new Error("Un Handled Error occurred"));
+
+        var uri = UriComponentsBuilder.fromUriString("/api/v1/bowling-info/{id}")
+                .buildAndExpand("test-id")
+                .toUri();
+        webTestClient.get()
+                .uri(uri)
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectBody(ErrorResponse.class)
+                .consumeWith(exchangeResult -> {
+                    var errResponse = exchangeResult.getResponseBody();
+                    assert errResponse != null;
+                    assertEquals(INTERNAL_SERVER_ERROR.value(), errResponse.getErrorCode());
+                    assertEquals(INTERNAL_SERVER_ERROR, errResponse.getStatus());
                 });
     }
 }
