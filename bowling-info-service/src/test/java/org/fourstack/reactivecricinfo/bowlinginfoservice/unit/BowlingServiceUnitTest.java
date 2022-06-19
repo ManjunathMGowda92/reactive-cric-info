@@ -163,4 +163,45 @@ public class BowlingServiceUnitTest {
                     assertEquals(INTERNAL_SERVER_ERROR, errResponse.getStatus());
                 });
     }
+
+    @Test
+    @DisplayName("BowlingServiceHandlerTest: Create Bowling Info")
+    public void testCreateBowlingInfo() {
+        Mockito.when(dao.save(Mockito.any()))
+                .thenReturn(Mono.just(EntityGenerator.bowlingInfoDAO()));
+
+        webTestClient.post()
+                .uri("/api/v1/bowling-info")
+                .bodyValue(EntityGenerator.bowlingInfoDTO())
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(BowlingInfoDTO.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    assertEquals("SAC2022-6T8-15L23-9NPZ-50234200", response.getPlayerId());
+                    assertEquals(3, response.getBowlingStatistics().size());
+                });
+    }
+
+    @Test
+    @DisplayName("BowlingServiceHandlerTest: BowlingServiceException Test")
+    public void testCreateBowlingInfoException(){
+        Mockito.when(dao.save(Mockito.any()))
+                .thenThrow(new RuntimeException("Unable to create Entity"));
+
+        webTestClient.post()
+                .uri(uriBuilder -> uriBuilder.path("/api/v1/bowling-info")
+                        .build()
+                ).bodyValue(EntityGenerator.bowlingInfoDTO())
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectBody(ErrorResponse.class)
+                .consumeWith(exchangeResult -> {
+                    var errResp = exchangeResult.getResponseBody();
+                    assert errResp != null;
+                    assertEquals(500, errResp.getErrorCode());
+                    assertEquals(INTERNAL_SERVER_ERROR, errResp.getStatus());
+                });
+    }
 }
