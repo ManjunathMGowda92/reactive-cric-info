@@ -1,0 +1,63 @@
+{
+  "battingId": "BAT-SAC2022-6T8-15L23-9NPZ-50234200",
+  "playerId": "SAC2022-6T8-15L23-9NPZ-50234200",
+  "statistics": [
+    {
+      "format": "TEST",
+      "matches": 200,
+      "innings": 329,
+      "runs": 15921,
+      "balls": 29437,
+      "highest": 248,
+      "average": 53.79,
+      "strikeRate": 54.08,
+      "numberOfNotOuts": 33,
+      "fours": 2058,
+      "sixes": 69,
+      "ducks": 14,
+      "noOfHalfCenturies": 68,
+      "noOfCenturies": 51,
+      "noOfDoubleCenturies": 6,
+      "noOfTripleCenturies": 0,
+      "noOfQuadrupleCenturies": 0
+    },
+    {
+      "format": "ODI",
+      "matches": 463,
+      "innings": 452,
+      "runs": 18426,
+      "balls": 21367,
+      "highest": 200,
+      "average": 44.83,
+      "strikeRate": 86.24,
+      "numberOfNotOuts": 41,
+      "fours": 2016,
+      "sixes": 195,
+      "ducks": 20,
+      "noOfHalfCenturies": 96,
+      "noOfCenturies": 49,
+      "noOfDoubleCenturies": 1,
+      "noOfTripleCenturies": 0,
+      "noOfQuadrupleCenturies": 0
+    },
+    {
+      "format": "T20",
+      "matches": 1,
+      "innings": 1,
+      "runs": 10,
+      "balls": 12,
+      "highest": 10,
+      "average": 10,
+      "strikeRate": 83.33,
+      "numberOfNotOuts": 0,
+      "fours": 2,
+      "sixes": 0,
+      "ducks": 0,
+      "noOfHalfCenturies": 0,
+      "noOfCenturies": 0,
+      "noOfDoubleCenturies": 0,
+      "noOfTripleCenturies": 0,
+      "noOfQuadrupleCenturies": 0
+    }
+  ]
+}
