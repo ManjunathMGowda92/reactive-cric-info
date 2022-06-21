@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
 import reactor.test.StepVerifier;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @DataMongoTest
 @ActiveProfiles("test")
 public class BattingInfoDaoTest {
@@ -44,8 +46,39 @@ public class BattingInfoDaoTest {
         StepVerifier.create(daoMono)
                 .assertNext(obj -> {
                     assert obj != null;
-                    Assertions.assertEquals("SAC2022-6T8-15L23-9NPZ-50234200", obj.getPlayerId());
-                    Assertions.assertEquals(3, obj.getStatistics().size());
+                    assertEquals("SAC2022-6T8-15L23-9NPZ-50234200", obj.getPlayerId());
+                    assertEquals(3, obj.getStatistics().size());
+                }).verifyComplete();
+    }
+
+    @Test
+    @DisplayName("BattingInfoDaoTest: find BattingInfo by Player Id")
+    public void testFindByPlayerId() {
+        String playerId = "SAC2022-6T8-15L23-9NPZ-50234200";
+        var daoMono = dao.findByPlayerId(playerId);
+
+        StepVerifier.create(daoMono)
+                .assertNext(obj -> {
+                    assert obj != null;
+                    assertEquals("SAC2022-6T8-15L23-9NPZ-50234200", obj.getPlayerId());
+                    assertEquals(3, obj.getStatistics().size());
+                }).verifyComplete();
+    }
+
+    @Test
+    @DisplayName("BattingInfoDaoTest: Test case to save BattingInfo")
+    public void testSaveBattingInfo() {
+        var battingInfo = EntityGenerator.battingInfoDAO();
+        battingInfo.setId(null);
+        battingInfo.setPlayerId("SAC2022-6T8-15L23-9NPZ");
+
+        var saveObj = dao.save(battingInfo);
+        StepVerifier.create(saveObj)
+                .assertNext(obj -> {
+                    assert obj != null;
+                    assertNotNull(obj.getId());
+                    assertEquals("SAC2022-6T8-15L23-9NPZ", obj.getPlayerId());
+                    assertEquals(3, obj.getStatistics().size());
                 }).verifyComplete();
     }
 }
