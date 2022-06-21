@@ -51,7 +51,7 @@ public class PlayerProfileRepositoryTest {
                     Assertions.assertEquals("Tendulkar", profile.getLastName());
                     Assertions.assertEquals("India", profile.getCountry());
                     Assertions.assertEquals(BowlingStyleType.RIGHT_ARM_LEGBREAK, profile.getBowlingStyle());
-                });
+                }).verifyComplete();
     }
 
     @Test
