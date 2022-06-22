@@ -7,28 +7,32 @@ springdoc:
 
 #Set Server port
 server:
-  port: 8084
+  port: 8086
 
 app:
   version: 1.0.0
-  description: Application to hold batting related information.
+  description: Application to hold Ranking related Information.
 
 #Set Application name
 spring:
   application:
-    name: batting-info-service
+    name: ranking-info-service
   #Set Context path for web-flux
   webflux:
-    base-path: /batting-service
+    base-path: /ranking-service
 
   #Set Embedded Mongo version and features
   mongodb:
     embedded:
       version: latest
-      features: ONLY_WITH_SSL, ONLY_WINDOWS_2008_SERVER, NO_HTTP_INTERFACE_ARG, ONLY_64BIT
+      features:
+        - ONLY_WITH_SSL
+        - ONLY_WINDOWS_2008_SERVER
+        - ONLY_64BIT
+        - NO_HTTP_INTERFACE_ARG
 
   #Set database name and port
   data:
     mongodb:
-      database: batting-info-service
-      port: 56670
+      database: ranking-info-service
+      port: 56680
