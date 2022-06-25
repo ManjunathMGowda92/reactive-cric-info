@@ -1,0 +1,21 @@
+{
+  "rankId": "RKSAC2022-6T8-15L23-9NPZ-50234200",
+  "playerId": "SAC2022-6T8-15L23-9NPZ-50234200",
+  "rankings": [
+    {
+      "format": "TEST",
+      "currentRank": 10,
+      "bestRank": 5
+    },
+    {
+      "format": "ODI",
+      "currentRank": 7,
+      "bestRank": 7
+    },
+    {
+      "format": "T20",
+      "currentRank": 15,
+      "bestRank": 8
+    }
+  ]
+}
