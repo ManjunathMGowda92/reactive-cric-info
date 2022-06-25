@@ -1,0 +1,20 @@
+{
+  "playerId": "SAC2022-6T8-15L23-9NPZ-50234200",
+  "rankings": [
+    {
+      "format": "TEST",
+      "current": 10,
+      "best": 5
+    },
+    {
+      "format": "ODI",
+      "current": 7,
+      "best": 7
+    },
+    {
+      "format": "T20",
+      "current": 15,
+      "best": 8
+    }
+  ]
+}
