@@ -1,6 +1,7 @@
 package org.fourstack.reactivecricinfo.rankinginfoservice.intg;
 
 import org.fourstack.reactivecricinfo.rankinginfoservice.dao.RankingInfoDao;
+import org.fourstack.reactivecricinfo.rankinginfoservice.testUtils.EntityGenerator;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -16,7 +17,8 @@ public class RankingInfoDaoTest {
 
     @BeforeEach
     public void setUpData() {
-
+        repository.save(EntityGenerator.iccRanking())
+                .block();
     }
 
     @AfterEach
