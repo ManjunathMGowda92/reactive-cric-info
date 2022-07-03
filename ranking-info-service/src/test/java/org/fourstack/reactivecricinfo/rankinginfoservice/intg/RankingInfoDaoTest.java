@@ -52,4 +52,20 @@ public class RankingInfoDaoTest {
                     Assertions.assertEquals(3, daoObj.getRankings().size());
                 }).verifyComplete();
     }
+
+    @Test
+    @DisplayName("RankingInfoDaoTest: Create RankingInfo")
+    public void testCreateRankingInfo(){
+        var rankingObj = EntityGenerator.iccRanking();
+        rankingObj.setRankingId(null);
+
+        var saveObjMono = repository.save(rankingObj);
+        StepVerifier.create(saveObjMono)
+                .assertNext(savedObj -> {
+                    assert savedObj != null;
+                    Assertions.assertNotNull(savedObj.getRankingId());
+                    Assertions.assertEquals("SAC2022-6T8-15L23-9NPZ-50234200", savedObj.getPlayerId());
+                    Assertions.assertEquals(3, savedObj.getRankings().size());
+                }).verifyComplete();
+    }
 }
