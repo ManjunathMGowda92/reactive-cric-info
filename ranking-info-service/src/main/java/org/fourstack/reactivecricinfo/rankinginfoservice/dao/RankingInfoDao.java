@@ -7,4 +7,6 @@ import reactor.core.publisher.Mono;
 public interface RankingInfoDao extends ReactiveMongoRepository<IccRanking, String> {
 
     Mono<IccRanking> findByPlayerId(String playerId);
+
+    Mono<Void> deleteByPlayerId(String playerId);
 }

@@ -68,4 +68,15 @@ public class RankingInfoDaoTest {
                     Assertions.assertEquals(3, savedObj.getRankings().size());
                 }).verifyComplete();
     }
+
+    @Test
+    @DisplayName("RankingInfoDaoTest: Delete RankingInfo by playerId.")
+    public void testDeleteRankingInfoByPlayerId() {
+        String playerId = "SAC2022-6T8-15L23-9NPZ-50234200";
+        var deletedObj = repository.deleteByPlayerId(playerId).block();
+        var emptyObj = repository.findByPlayerId(playerId);
+        StepVerifier.create(emptyObj)
+                .expectComplete()
+                .verify();
+    }
 }
