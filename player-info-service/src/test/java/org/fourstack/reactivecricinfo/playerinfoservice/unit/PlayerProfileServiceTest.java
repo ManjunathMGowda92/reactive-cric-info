@@ -317,4 +317,49 @@ public class PlayerProfileServiceTest {
                 .expectError(PlayerServiceException.class)
                 .verify();
     }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: Check if player exist or not.")
+    public void testIsPlayerExist() {
+        String playerId = "VIR2022-6Y8-5P14-48SA-257223300";
+
+        // Mock the repository layer.
+        Mockito.when(playerRepository.findById(playerId))
+                .thenReturn(Mono.just(playerProfile));
+
+        Mono<Boolean> playerExist = service.isPlayerExist(playerId);
+        StepVerifier.create(playerExist)
+                .expectNext(true)
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: isPlayerExist for PlayerInfoNotFoundException")
+    public void testIsPlayerExistForNotFoundException() {
+        String playerId = "VIR2022-6Y8-5P14-48SA-257223300";
+
+        // Mock the repository layer
+        Mockito.when(playerRepository.findById(playerId))
+                .thenReturn(Mono.empty());
+
+        var playerExistMono = service.isPlayerExist(playerId);
+        StepVerifier.create(playerExistMono)
+                .expectError(PlayerInfoNotFoundException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: isPlayerExist for PlayerServiceException")
+    public void testIsPlayerExistForServiceException() {
+        String playerId = "VIR2022-6Y8-5P14-48SA-257223300";
+
+        //Mock the repository layer.
+        Mockito.when(playerRepository.findById(Mockito.anyString()))
+                .thenReturn(Mono.error(new RuntimeException("Service Exception")));
+
+        var playerExistMono = service.isPlayerExist(playerId);
+        StepVerifier.create(playerExistMono)
+                .expectError(PlayerServiceException.class)
+                .verify();
+    }
 }
