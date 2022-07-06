@@ -20,8 +20,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -236,6 +235,39 @@ public class ProfileInfoFlowTest {
                     assert response != null;
 
                     assertNotNull(response.getPlayerId());
+                });
+    }
+
+    @Test
+    @DisplayName("ProfileInfoFlowTest: check if player exist for playerId.")
+    public void testCheckIfPlayerExist() {
+        String playerId = "VIR2022-6Y8-5P14-48SA-257223300";
+        webTestClient.get()
+                .uri("/api/v1/player/{id}/exists", playerId)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(Boolean.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assertTrue(response);
+                });
+    }
+
+    @Test
+    @DisplayName("ProfileInfoFlowTest: PlayerNotFoundException for checkPlayerExist.")
+    public void testCheckIfPlayerExistNotFoundException() {
+        String playerId = "INVALID75675";
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/api/v1/player/{id}/exists").build(playerId))
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody(ErrorResponse.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    assertEquals("No Player found for the playerId: INVALID75675", response.getErrorMsg());
+                    assertEquals(404, response.getErrorCode());
+                    assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
                 });
     }
 }

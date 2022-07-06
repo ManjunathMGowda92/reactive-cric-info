@@ -134,4 +134,12 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
                 ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
+    @Override
+    public Mono<Boolean> isPlayerExist(String playerId) {
+        return playerRepository.findById(playerId)
+                .onErrorResume(err -> Mono.error(new PlayerServiceException(err.getMessage(), err.getCause())))
+                .switchIfEmpty(generateError("No Player found for the playerId: ", playerId))
+                .map(daoObj -> true);
+    }
+
 }

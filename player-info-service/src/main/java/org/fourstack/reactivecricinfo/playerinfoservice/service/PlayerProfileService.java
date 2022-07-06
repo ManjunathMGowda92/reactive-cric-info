@@ -18,5 +18,7 @@ public interface PlayerProfileService {
 
     Mono<PlayerInfoDTO> createPlayerProfile(PlayerInfoDTO dto);
 
+    Mono<Boolean> isPlayerExist(String playerId);
+
 
 }
