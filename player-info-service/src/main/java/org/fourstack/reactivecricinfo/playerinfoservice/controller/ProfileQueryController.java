@@ -48,4 +48,9 @@ public class ProfileQueryController {
     public Flux<PlayerInfoDTO> getPlayersByBowlingStyle(@PathVariable("style") String bowlingStyle) {
         return playerService.getPlayersByBowlingStyle(bowlingStyle);
     }
+
+    @GetMapping("/player/{id}/exists")
+    public Mono<Boolean> checkIfPlayerExist(@PathVariable("id") String playerId) {
+        return playerService.isPlayerExist(playerId);
+    }
 }
