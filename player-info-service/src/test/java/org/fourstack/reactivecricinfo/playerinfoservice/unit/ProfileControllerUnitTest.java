@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @WebFluxTest
 @ContextConfiguration(classes = {ProfileCommandController.class, ProfileQueryController.class,
@@ -181,4 +182,25 @@ public class ProfileControllerUnitTest {
                     assertEquals(BowlingStyleType.RIGHT_ARM_LEGBREAK, response.getBowlingStyle());
                 });
     }
+
+    @Test
+    @DisplayName("ProfileControllerUnitTest: check player exist or not using playerId.")
+    public void testCheckIfPlayerExist() {
+        String playerId = "VIR2022-6Y8-5P14-48SA-257223300";
+
+        //Mock the service layer
+        Mockito.when(playerService.isPlayerExist(playerId))
+                .thenReturn(Mono.just(true));
+
+        webClient.get()
+                .uri("/api/v1/player/{id}/exists", playerId)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(Boolean.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assertTrue(response);
+                });
+    }
+
 }
