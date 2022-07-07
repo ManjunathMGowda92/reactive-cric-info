@@ -15,4 +15,6 @@ public interface PlayerProfileRepository extends ReactiveMongoRepository<PlayerP
     Flux<PlayerProfile> findByBattingStyle(String battingStyle);
 
     Flux<PlayerProfile> findByBowlingStyle(String bowlingStyle);
+
+    Flux<PlayerProfile> findByFirstNameIgnoreCase(String firstName);
 }

@@ -20,5 +20,7 @@ public interface PlayerProfileService {
 
     Mono<Boolean> isPlayerExist(String playerId);
 
+    Flux<PlayerInfoDTO> getPlayersByFirstName(String firstname);
+
 
 }
