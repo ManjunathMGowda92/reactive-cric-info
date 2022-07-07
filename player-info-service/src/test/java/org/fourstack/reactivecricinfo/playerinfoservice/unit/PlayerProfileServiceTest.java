@@ -182,7 +182,7 @@ public class PlayerProfileServiceTest {
                 .thenReturn(Flux.error(new Exception("Exception occurred while fetching data")));
         var playersFlux = service.getPlayersByGender(gender);
         StepVerifier.create(playersFlux)
-                .expectErrorMatches(throwable -> throwable instanceof  PlayerServiceException)
+                .expectErrorMatches(throwable -> throwable instanceof PlayerServiceException)
                 .verify();
     }
 
@@ -221,7 +221,7 @@ public class PlayerProfileServiceTest {
 
     @Test
     @DisplayName("PlayerProfileServiceTest: PlayerServiceException for getPlayersByBattingStyle")
-    public void testGetPlayersByBattingStyleForPlayerServiceException(){
+    public void testGetPlayersByBattingStyleForPlayerServiceException() {
         String battingStyle = "RIGHT_HANDED_BATSMAN";
         Mockito.when(playerRepository.findByBattingStyle(battingStyle))
                 .thenReturn(Flux.error(new Exception("Exception from DAO layer")));
@@ -359,6 +359,59 @@ public class PlayerProfileServiceTest {
 
         var playerExistMono = service.isPlayerExist(playerId);
         StepVerifier.create(playerExistMono)
+                .expectError(PlayerServiceException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: Get Players by firstname")
+    public void testGetPlayersByFirstName() {
+        String firstname = "Sachin";
+
+        var firstNameList = playerProfiles
+                .stream()
+                .filter(obj -> obj.getFirstName().equalsIgnoreCase(firstname))
+                .collect(Collectors.toList());
+
+        // Mock the repository layer.
+        Mockito.when(playerRepository.findByFirstNameIgnoreCase(Mockito.anyString()))
+                .thenReturn(Flux.fromIterable(firstNameList));
+
+        // Mock the Conversion Service
+        Mockito.when(profileToDtoConverter.convert(Mockito.any(PlayerProfile.class), Mockito.any()))
+                .thenReturn(playerInfoDTO);
+
+        Flux<PlayerInfoDTO> dtoFlux = service.getPlayersByFirstName(firstname);
+        StepVerifier.create(dtoFlux)
+                .expectNextCount(1)
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerNotFoundException for getPlayersByFirstName")
+    public void testGetPlayersByFirstNameNotFoundException() {
+        String firstname = "Sachin";
+
+        // Mock the repository layer
+        Mockito.when(playerRepository.findByFirstNameIgnoreCase(Mockito.anyString()))
+                .thenReturn(Flux.empty());
+        var dtoFlux = service.getPlayersByFirstName(firstname);
+        StepVerifier.create(dtoFlux)
+                .expectError(PlayerInfoNotFoundException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerServiceException for getPlayersByFirstName")
+    public void testGetPlayersByFirstNameServiceException() {
+        String firstname = "Sachin";
+
+        // Mock the repository layer.
+        Mockito.when(playerRepository.findByFirstNameIgnoreCase(Mockito.anyString()))
+                .thenReturn(Flux.error(new RuntimeException("Service Exception")));
+
+        var dtoFlux = service.getPlayersByFirstName(firstname);
+        StepVerifier.create(dtoFlux)
                 .expectError(PlayerServiceException.class)
                 .verify();
     }
