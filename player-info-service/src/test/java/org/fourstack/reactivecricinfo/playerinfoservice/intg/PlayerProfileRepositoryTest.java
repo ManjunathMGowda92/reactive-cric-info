@@ -116,4 +116,14 @@ public class PlayerProfileRepositoryTest {
                 .expectNextCount(1)
                 .verifyComplete();
     }
+
+    @Test
+    @DisplayName("PlayerProfileRepositoryTest: Find PlayerProfile by lastname")
+    public void testFindByLastName() {
+        String lastname = "kohli";
+        var daoFlux = repository.findByLastNameIgnoreCase(lastname);
+        StepVerifier.create(daoFlux)
+                .expectNextCount(1)
+                .verifyComplete();
+    }
 }
