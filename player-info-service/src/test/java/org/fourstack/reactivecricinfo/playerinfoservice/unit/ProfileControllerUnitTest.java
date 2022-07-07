@@ -203,4 +203,38 @@ public class ProfileControllerUnitTest {
                 });
     }
 
+    @Test
+    @DisplayName("ProfileControllerUnitTest: Get Players by lastname")
+    public void testGetPlayersByLastName() {
+        String lastname = "tendulkar";
+
+        // Mock the service layer
+        Mockito.when(playerService.getPlayersByLastName(Mockito.anyString()))
+                .thenReturn(Flux.fromIterable(playerDTOList));
+
+        webClient.get()
+                .uri("/api/v1/player/by-lastname/{lastname}", lastname)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBodyList(PlayerInfoDTO.class)
+                .hasSize(playerDTOList.size());
+    }
+
+    @Test
+    @DisplayName("ProfileControllerUnitTest: Get Players by first name.")
+    public void testGetPlayersByFirstName() {
+        String firstName = "sachin";
+
+        // Mock the service layer
+        Mockito.when(playerService.getPlayersByFirstName(Mockito.anyString()))
+                .thenReturn(Flux.fromIterable(playerDTOList));
+
+        webClient.get()
+                .uri("/api/v1/player/by-firstname/{firstname}", firstName)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBodyList(PlayerInfoDTO.class)
+                .hasSize(playerDTOList.size());
+    }
+
 }

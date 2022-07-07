@@ -415,4 +415,52 @@ public class PlayerProfileServiceTest {
                 .expectError(PlayerServiceException.class)
                 .verify();
     }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: Get players by lastname.")
+    public void testGetPlayersByLastName() {
+        String lastname = "tendulkar";
+
+        // Mock the repository layer
+        Mockito.when(playerRepository.findByLastNameIgnoreCase(Mockito.anyString()))
+                .thenReturn(Flux.fromIterable(playerProfiles));
+
+        // Mock the Conversion service
+        Mockito.when(profileToDtoConverter.convert(Mockito.any(PlayerProfile.class), Mockito.any()))
+                .thenReturn(playerInfoDTO);
+        var dtoFlux = service.getPlayersByLastName(lastname);
+        StepVerifier.create(dtoFlux)
+                .expectNextCount(playerProfiles.size())
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerNotFoundException for getPlayersByLastName")
+    public void testGetPlayersByLastNameNotFoundException() {
+        String lastname = "tendulkar";
+
+        // Mock the repository layer
+        Mockito.when(playerRepository.findByLastNameIgnoreCase(Mockito.anyString()))
+                .thenReturn(Flux.empty());
+
+        var dtoFlux = service.getPlayersByLastName(lastname);
+        StepVerifier.create(dtoFlux)
+                .expectError(PlayerInfoNotFoundException.class)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("PlayerProfileServiceTest: PlayerServiceException for getPlayersByLastName")
+    public void testGetPlayersByLastNameServiceException() {
+        String lastname = "tendulkar";
+
+        // Mock the repository layer
+        Mockito.when(playerRepository.findByLastNameIgnoreCase(Mockito.anyString()))
+                .thenReturn(Flux.error(new RuntimeException("Service Exception")));
+
+        var dtoFlux = service.getPlayersByLastName(lastname);
+        StepVerifier.create(dtoFlux)
+                .expectError(PlayerServiceException.class)
+                .verify();
+    }
 }
