@@ -58,4 +58,9 @@ public class ProfileQueryController {
     public Flux<PlayerInfoDTO> getPlayersByFirstName(@PathVariable("firstname") String firstname) {
         return playerService.getPlayersByFirstName(firstname);
     }
+
+    @GetMapping("/player/by-lastname/{lastname}")
+    public Flux<PlayerInfoDTO> getPlayersByLastName(@PathVariable("lastname") String lastname) {
+        return playerService.getPlayersByLastName(lastname);
+    }
 }

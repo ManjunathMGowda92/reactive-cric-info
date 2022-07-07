@@ -22,5 +22,7 @@ public interface PlayerProfileService {
 
     Flux<PlayerInfoDTO> getPlayersByFirstName(String firstname);
 
+    Flux<PlayerInfoDTO> getPlayersByLastName(String lastname);
+
 
 }
