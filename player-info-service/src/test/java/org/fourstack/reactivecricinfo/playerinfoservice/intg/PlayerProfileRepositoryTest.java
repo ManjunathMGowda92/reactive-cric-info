@@ -106,4 +106,14 @@ public class PlayerProfileRepositoryTest {
                     Assertions.assertNotNull(profile.getPlayerId());
                 });
     }
+
+    @Test
+    @DisplayName("PlayerProfileRepositoryTest: Find PlayerProfile by firstname")
+    public void testFindByFirstName() {
+        String firstname = "Sachin";
+        var daoFlux = repository.findByFirstNameIgnoreCase(firstname);
+        StepVerifier.create(daoFlux)
+                .expectNextCount(1)
+                .verifyComplete();
+    }
 }

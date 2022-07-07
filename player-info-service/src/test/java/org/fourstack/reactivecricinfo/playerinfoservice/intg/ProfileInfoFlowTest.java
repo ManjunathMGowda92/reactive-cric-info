@@ -7,10 +7,7 @@ import org.fourstack.reactivecricinfo.playerinfoservice.dto.PlayerInfoDTO;
 import org.fourstack.reactivecricinfo.playerinfoservice.exception.model.ErrorResponse;
 import org.fourstack.reactivecricinfo.playerinfoservice.model.PlayerProfile;
 import org.fourstack.reactivecricinfo.playerinfoservice.util.EntityGenerator;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -268,6 +265,37 @@ public class ProfileInfoFlowTest {
                     assertEquals("No Player found for the playerId: INVALID75675", response.getErrorMsg());
                     assertEquals(404, response.getErrorCode());
                     assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+                });
+    }
+
+    @Test
+    @DisplayName("ProfileInfoFlowTest: Find Players by Firstname")
+    public void testGetPlayersByFirstName() {
+        String firstName = "Sachin";
+        webTestClient.get()
+                .uri("/api/v1/player/by-firstname/{firstname}", firstName)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBodyList(PlayerInfoDTO.class)
+                .hasSize(1);
+    }
+
+    @Test
+    @DisplayName("ProfileInfoFlowTest: PlayerNotFoundException")
+    public void testGetPlayersByFirstNameNotFoundException() {
+        String firstName = "Test";
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/api/v1/player/by-firstname/{firstname}")
+                        .build(firstName))
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody(ErrorResponse.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+                    assertEquals(404, response.getErrorCode());
+                    assertEquals("No Players found for firstname: Test", response.getErrorMsg());
                 });
     }
 }

@@ -53,4 +53,9 @@ public class ProfileQueryController {
     public Mono<Boolean> checkIfPlayerExist(@PathVariable("id") String playerId) {
         return playerService.isPlayerExist(playerId);
     }
+
+    @GetMapping("/player/by-firstname/{firstname}")
+    public Flux<PlayerInfoDTO> getPlayersByFirstName(@PathVariable("firstname") String firstname) {
+        return playerService.getPlayersByFirstName(firstname);
+    }
 }

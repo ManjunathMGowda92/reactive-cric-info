@@ -40,11 +40,11 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
                             return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
                         }
                 ).switchIfEmpty(
-                        generateError("No Player Details found for the playerId: ", playerId)
+                        generatePlayerNotFoundException("No Player Details found for the playerId: ", playerId)
                 ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
-    private Mono<PlayerProfile> generateError(String message, String concatStr) {
+    private Mono<PlayerProfile> generatePlayerNotFoundException(String message, String concatStr) {
         return Mono.error(() -> new PlayerInfoNotFoundException(message + concatStr));
     }
 
@@ -62,7 +62,7 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
                     log.error("PlayerProfileService: getPlayersByCountry - {}", err.getMessage());
                     return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
                 }).switchIfEmpty(
-                        generateError("No Player found for the Country :", country)
+                        generatePlayerNotFoundException("No Player found for the Country :", country)
                 ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
@@ -81,7 +81,7 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
                             return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
                         }
                 ).switchIfEmpty(
-                        generateError("No Player found for the Gender :", gender)
+                        generatePlayerNotFoundException("No Player found for the Gender :", gender)
                 ).map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
@@ -99,7 +99,7 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
                             log.error("PlayerProfileService: getPlayersByBattingStyle - {}", err.getMessage());
                             return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
                         }
-                ).switchIfEmpty(generateError("No Player found for the Batting Style :", battingStyle))
+                ).switchIfEmpty(generatePlayerNotFoundException("No Player found for the Batting Style :", battingStyle))
                 .map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
@@ -117,7 +117,7 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
                             log.error("PlayerProfileService: getPlayersByBowlingStyle - ", err);
                             return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
                         }
-                ).switchIfEmpty(generateError("No Player found for the Bowling Style :", bowlingStyle))
+                ).switchIfEmpty(generatePlayerNotFoundException("No Player found for the Bowling Style :", bowlingStyle))
                 .map(profile -> profileToDtoConverter.convert(profile, PlayerInfoDTO.class));
     }
 
@@ -141,8 +141,16 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
                     log.error("PlayerProfileService: isPlayerExist - {}", err.getMessage());
                     return Mono.error(new PlayerServiceException(err.getMessage(), err.getCause()));
                 })
-                .switchIfEmpty(generateError("No Player found for the playerId: ", playerId))
+                .switchIfEmpty(generatePlayerNotFoundException("No Player found for the playerId: ", playerId))
                 .map(daoObj -> true);
+    }
+
+    @Override
+    public Flux<PlayerInfoDTO> getPlayersByFirstName(String firstname) {
+        return playerRepository.findByFirstNameIgnoreCase(firstname)
+                .onErrorResume(err -> Mono.error(new PlayerServiceException(err.getMessage(), err.getCause())))
+                .switchIfEmpty(generatePlayerNotFoundException("No Players found for firstname: ", firstname))
+                .map(daoObj -> profileToDtoConverter.convert(daoObj, PlayerInfoDTO.class));
     }
 
 }
