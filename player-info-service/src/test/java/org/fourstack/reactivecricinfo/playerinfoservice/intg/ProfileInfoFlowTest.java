@@ -281,7 +281,7 @@ public class ProfileInfoFlowTest {
     }
 
     @Test
-    @DisplayName("ProfileInfoFlowTest: PlayerNotFoundException")
+    @DisplayName("ProfileInfoFlowTest: PlayerNotFoundException for getPlayersByFirstName")
     public void testGetPlayersByFirstNameNotFoundException() {
         String firstName = "Test";
         webTestClient.get()
@@ -296,6 +296,36 @@ public class ProfileInfoFlowTest {
                     assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
                     assertEquals(404, response.getErrorCode());
                     assertEquals("No Players found for firstname: Test", response.getErrorMsg());
+                });
+    }
+
+    @Test
+    @DisplayName("ProfileInfoFlowTest: Get players by lastname.")
+    public void testGetPlayersByLastName() {
+        String lastname = "kohli";
+        webTestClient.get()
+                .uri("/api/v1/player/by-lastname/{lastname}", lastname)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBodyList(PlayerInfoDTO.class)
+                .hasSize(1);
+    }
+
+    @Test
+    @DisplayName("ProfileInfoFlowTest: NotFoundException for getPlayersByLastName")
+    public void testGetPlayersByLastNameNotFoundException() {
+        String lastname = "test";
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/api/v1/player/by-lastname/{lastname}")
+                        .build(lastname))
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectBody(ErrorResponse.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+                    assertEquals(404, response.getErrorCode());
                 });
     }
 }
