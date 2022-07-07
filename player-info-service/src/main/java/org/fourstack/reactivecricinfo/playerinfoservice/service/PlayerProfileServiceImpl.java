@@ -153,4 +153,12 @@ public class PlayerProfileServiceImpl implements PlayerProfileService {
                 .map(daoObj -> profileToDtoConverter.convert(daoObj, PlayerInfoDTO.class));
     }
 
+    @Override
+    public Flux<PlayerInfoDTO> getPlayersByLastName(String lastname) {
+        return playerRepository.findByLastNameIgnoreCase(lastname)
+                .onErrorResume(err -> Mono.error(new PlayerServiceException(err.getMessage(), err.getCause())))
+                .switchIfEmpty(generatePlayerNotFoundException("No Players found for lastname: ", lastname))
+                .map(daoObj -> profileToDtoConverter.convert(daoObj, PlayerInfoDTO.class));
+    }
+
 }
