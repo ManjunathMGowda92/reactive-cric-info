@@ -17,8 +17,9 @@ spring:
   webflux:
     base-path: /cric-info-gateway
 
-# Set player-info-service API URL's
+# Set external service API URL's
 app:
+  # player-info-service API URL's
   player-service:
     base-url: 'http://localhost:8080/player-profile/api/v1/player'
     url:
@@ -30,3 +31,27 @@ app:
       player-by-gender: '${app.player-service.base-url}/by-gender/{gender}'
       player-by-country: '${app.player-service.base-url}/by-country-name/{country-name}'
       player-exist-or-not: '${app.player-service.base-url}/{id}/exists'
+
+  # batting-info-service API URL's
+  batting-service:
+    base-url: 'http://localhost:8084/batting-service/api/v1/batting-info'
+    url:
+      create-batting-info: '${app.batting-service.base-url}'
+      batting-info-by-id: '${app.batting-service.base-url}/{id}'
+      batting-info-by-player-id: '${app.batting-service.base-url}/by-player-id/{player-id}'
+
+  # bowling-info-service API URL's
+  bowling-service:
+    base-url: 'http://localhost:8082/bowling-service/api/v1/bowling-info'
+    url:
+      create-bowling-info: '${app.bowling-service.base-url}'
+      bowling-info-by-id: '${app.bowling-service.base-url}/{id}'
+      bowling-info-by-player-id: '${app.bowling-service.base-url}/by-player-id/{player-id}'
+
+  # ranking-info-service API URL's
+  ranking-service:
+    base-url: 'http://localhost:8086/ranking-service/api/v1/ranking-info'
+    url:
+      create-ranking-info: '${app.ranking-service.base-url}'
+      ranking-info-by-id: '${app.ranking-service.base-url}/{id}'
+      ranking-info-by-player-id: '${app.ranking-service.base-url}/{player-id}'

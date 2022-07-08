@@ -9,12 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class ApiGatewayApplication {
 
 	public static void main(String[] args) {
-		ConfigurableApplicationContext context = SpringApplication.run(ApiGatewayApplication.class, args);
-
-		GatewayPropertiesConfig bean = context.getBean(GatewayPropertiesConfig.class);
-		System.out.println(bean.getPlayerByBattingStyleURL());
-		System.out.println(bean.getPlayerByBowlingStyleURL());
-		System.out.println(bean.getPlayerByGenderURL());
+		SpringApplication.run(ApiGatewayApplication.class, args);
 	}
 
 }
