@@ -32,4 +32,31 @@ public class GatewayPropertiesConfig {
     @Value("${app.player-service.url.player-exist-or-not}")
     private String playerExistOrNotURL;
 
+    @Value("${app.batting-service.url.create-batting-info}")
+    private String createBattingURL;
+
+    @Value("{app.batting-service.url.batting-info-by-id}")
+    private String battingInfoByIdURL;
+
+    @Value("{app.batting-service.url.batting-info-by-player-id}")
+    private String battingInfoByPlayerIdURL;
+
+    @Value("{app.bowling-service.url.create-bowling-info}")
+    private String createBowlingURL;
+
+    @Value("{app.bowling-service.url.bowling-info-by-id}")
+    private String bowlingInfoByIdURL;
+
+    @Value("{app.bowling-service.url.bowling-info-by-player-id}")
+    private String bowlingInfoByPlayerIdURL;
+
+    @Value("{app.ranking-service.url.create-ranking-info}")
+    private String createRankingURL;
+
+    @Value("{app.ranking-service.url.ranking-info-by-id}")
+    private String rankingInfoByIdURL;
+
+    @Value("{app.ranking-service.url.ranking-info-by-player-id}")
+    private String rankingInfoByPlayerIdURL;
+
 }
