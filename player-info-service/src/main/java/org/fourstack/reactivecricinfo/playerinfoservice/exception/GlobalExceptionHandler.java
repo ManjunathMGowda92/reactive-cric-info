@@ -17,6 +17,15 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Exception handling method to handle the {@link PlayerInfoNotFoundException}.
+     * Exception will be converted to {@link ErrorResponse} object with suitable
+     * error message and other details.
+     *
+     * @param exception {@link PlayerInfoNotFoundException} object
+     * @param request   HttpRequest object.
+     * @return ErrorResponse object.
+     */
     @ExceptionHandler(PlayerInfoNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePlayerNotFoundException(
             PlayerInfoNotFoundException exception, ServerHttpRequest request) {
@@ -34,6 +43,15 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    /**
+     * Exception handling method to handle {@link PlayerServiceException}.
+     * Exception will be converted to {@link ErrorResponse} object with suitable
+     * error message and other details.
+     *
+     * @param exception {@link PlayerServiceException} object.
+     * @param request   HttpRequest Object.
+     * @return ErrorResponse object.
+     */
     @ExceptionHandler(PlayerServiceException.class)
     public ResponseEntity<ErrorResponse> handlePlayerServiceException(
             PlayerServiceException exception, ServerHttpRequest request) {

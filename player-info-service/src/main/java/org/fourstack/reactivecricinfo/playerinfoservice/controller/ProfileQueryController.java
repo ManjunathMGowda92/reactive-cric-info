@@ -12,8 +12,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * RestController class which acts for the Query (GET).
+ * RestController class which acts for the Querying(GET) PlayerInfo Data.
  * It exposes the method which are responsible for the query of data.
+ *
+ * @author manjunath
  */
 @RestController
 @RequestMapping("/api/v1")
