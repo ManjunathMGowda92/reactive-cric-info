@@ -16,3 +16,17 @@ spring:
   # Set Context Path
   webflux:
     base-path: /cric-info-gateway
+
+# Set player-info-service API URL's
+app:
+  player-service:
+    base-url: 'http://localhost:8080/player-profile/api/v1/player'
+    url:
+      player-by-id: '${app.player-service.base-url}/{id}'
+      player-by-lastname: '${app.player-service.base-url}/by-lastname/{lastname}'
+      player-by-firstname: '${app.player-service.base-url}/by-firstname/{firstname}'
+      player-by-bowling-style: '${app.player-service.base-url}/bowling-style/{style}'
+      player-by-batting-style: '${app.player-service.base-url}/batting-style/{style}'
+      player-by-gender: '${app.player-service.base-url}/by-gender/{gender}'
+      player-by-country: '${app.player-service.base-url}/by-country-name/{country-name}'
+      player-exist-or-not: '${app.player-service.base-url}/{id}/exists'
