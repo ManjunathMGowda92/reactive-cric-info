@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Getter
-public class GatewayPropertiesConfig {
+public class UriPropertiesConfig {
 
     @Value("${app.player-service.url.player-by-id}")
     private String playerByIdURL;
