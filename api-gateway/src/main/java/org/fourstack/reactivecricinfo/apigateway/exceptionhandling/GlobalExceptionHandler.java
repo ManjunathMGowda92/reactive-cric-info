@@ -2,6 +2,7 @@ package org.fourstack.reactivecricinfo.apigateway.exceptionhandling;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fourstack.reactivecricinfo.apigateway.dto.ErrorResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -36,15 +37,34 @@ public class GlobalExceptionHandler {
             return ResponseEntity.status(errResponse.getStatus() != null ? errResponse.getStatus() : NOT_FOUND)
                     .body(errResponse);
         }
-        errResponse = ErrorResponse.builder()
-                .errorCode(NOT_FOUND.value())
-                .errorMsg(exception.getMessage())
-                .status(NOT_FOUND)
-                .urlDetails(request.getPath().value())
-                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
-                .build();
+        errResponse = createErrorResponse(
+                exception.getMessage(),
+                NOT_FOUND,
+                request.getPath().value()
+        );
+
         return ResponseEntity.status(NOT_FOUND)
                 .body(errResponse);
+    }
+
+    /**
+     * Method to create {@link ErrorResponse} using error message, error code,
+     * HttpStatus and url details.
+     *
+     * @param errorMsg  Error message for ErrorResponse.
+     * @param errorCode Error Code value for ErrorResponse.
+     * @param status    HttpStatus for ErrorResponse.
+     * @param url       URL details.
+     * @return ErrorResponse object.
+     */
+    private ErrorResponse createErrorResponse(String errorMsg, HttpStatus status, String url) {
+        return ErrorResponse.builder()
+                .errorCode(status.value())
+                .errorMsg(errorMsg)
+                .status(status)
+                .urlDetails(url)
+                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
+                .build();
     }
 
     /**
@@ -66,13 +86,11 @@ public class GlobalExceptionHandler {
                     .body(errResponse);
         }
 
-        errResponse = ErrorResponse.builder()
-                .errorCode(INTERNAL_SERVER_ERROR.value())
-                .errorMsg(exception.getMessage())
-                .status(INTERNAL_SERVER_ERROR)
-                .urlDetails(request.getPath().value())
-                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
-                .build();
+        errResponse = createErrorResponse(
+                exception.getMessage(),
+                INTERNAL_SERVER_ERROR,
+                request.getPath().value()
+        );
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(errResponse);
     }
@@ -89,13 +107,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleConnectionException(
             ConnectException exception, ServerHttpRequest request) {
         log.info("GlobalExceptionHandler: Start of handleConnectionException() method");
-        ErrorResponse response = ErrorResponse.builder()
-                .errorCode(INTERNAL_SERVER_ERROR.value())
-                .status(INTERNAL_SERVER_ERROR)
-                .errorMsg(exception.getMessage())
-                .urlDetails(request.getPath().value())
-                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
-                .build();
+        ErrorResponse response = createErrorResponse(
+                exception.getMessage(),
+                INTERNAL_SERVER_ERROR,
+                request.getPath().value()
+        );
+
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(response);
     }
