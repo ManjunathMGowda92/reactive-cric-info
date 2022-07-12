@@ -52,7 +52,6 @@ public class GlobalExceptionHandler {
      * HttpStatus and url details.
      *
      * @param errorMsg  Error message for ErrorResponse.
-     * @param errorCode Error Code value for ErrorResponse.
      * @param status    HttpStatus for ErrorResponse.
      * @param url       URL details.
      * @return ErrorResponse object.
