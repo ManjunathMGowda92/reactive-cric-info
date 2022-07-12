@@ -7,6 +7,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.net.ConnectException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -74,5 +75,28 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(errResponse);
+    }
+
+    /**
+     * Method to handle the {@link ConnectException}, which occurs when
+     * external service is not up and running.
+     *
+     * @param exception {@link ConnectException} Object.
+     * @param request   ServerRequest object.
+     * @return ResponseEntity with Error Response object.
+     */
+    @ExceptionHandler(ConnectException.class)
+    public ResponseEntity<ErrorResponse> handleConnectionException(
+            ConnectException exception, ServerHttpRequest request) {
+        log.info("GlobalExceptionHandler: Start of handleConnectionException() method");
+        ErrorResponse response = ErrorResponse.builder()
+                .errorCode(INTERNAL_SERVER_ERROR.value())
+                .status(INTERNAL_SERVER_ERROR)
+                .errorMsg(exception.getMessage())
+                .urlDetails(request.getPath().value())
+                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
+                .build();
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                .body(response);
     }
 }
