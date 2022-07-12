@@ -74,9 +74,21 @@ public class PlayerInfoApiHelper {
      * @return Flux of PlayerInfoDTO objects.
      */
     public Flux<PlayerInfoDTO> retrievePlayersByLastname(String lastName) {
+        return getPlayerInfoDTOFlux(uriProperties.getPlayerByLastNameURL(), lastName);
+    }
+
+    /**
+     * It is a common method which fetches the Flux of Players using url and corresponding
+     * uri variable.
+     *
+     * @param url         Target URL
+     * @param uriVariable Path variable required for the URL
+     * @return Flux of PlayerInfoDTO objects.
+     */
+    private Flux<PlayerInfoDTO> getPlayerInfoDTOFlux(String url, String uriVariable) {
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path(uriProperties.getPlayerByLastNameURL())
-                        .build(lastName))
+                .uri(uriBuilder -> uriBuilder.path(url)
+                        .build(uriVariable))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(
@@ -90,5 +102,35 @@ public class PlayerInfoApiHelper {
                                 .map(PlayerServiceException::new)
                 )
                 .bodyToFlux(PlayerInfoDTO.class);
+    }
+
+    /**
+     * Method which retrieves the Players Info using the WebClient and firstname
+     * variable. This is an external API call which makes connection with
+     * player-info-service to fetch Flux of PlayerInfo objects.
+     * <br/>
+     * To fetch Flux of PlayerInfo objects, WebClient uses URL from yml file
+     * with property name: <b><i>{app.player-service.url.player-by-firstname}</i></b>
+     *
+     * @param firstname Firstname property value
+     * @return Flux of PlayerInfoDTO objects.
+     */
+    public Flux<PlayerInfoDTO> retrievePlayersByFirstname(String firstname) {
+        return getPlayerInfoDTOFlux(uriProperties.getPlayerByFirstNameURL(), firstname);
+    }
+
+    /**
+     * Method which retrieves the Players Info using the WebClient and country
+     * variable. This is an external API call which makes connection with
+     * player-info-service to fetch Flux of PlayerInfo objects.
+     * <br/>
+     * To fetch Flux of PlayerInfo objects, WebClient uses URL from yml file
+     * with property name: <b><i>{app.player-service.url.player-by-country}</i></b>
+     *
+     * @param country Country name property value.
+     * @return Flux of PlayerInfoDTO objects.
+     */
+    public Flux<PlayerInfoDTO> retrievePlayersByCountry(String country) {
+        return getPlayerInfoDTOFlux(uriProperties.getPlayerByCountryURL(), country);
     }
 }
