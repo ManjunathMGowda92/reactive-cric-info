@@ -23,7 +23,17 @@ public class PlayerInfoController {
     }
 
     @GetMapping("/by-lastname/{lastname}")
-    public Flux<PlayerInfoDTO> retrievePlayersInfoByLastName(@PathVariable("lastname") String lastname) {
+    public Flux<PlayerInfoDTO> retrievePlayersInfoByLastname(@PathVariable("lastname") String lastname) {
         return playerInfoApiHelper.retrievePlayersByLastname(lastname);
+    }
+
+    @GetMapping("/by-firstname/{firstname}")
+    public Flux<PlayerInfoDTO> retrievePlayersInfoByFirstname(@PathVariable("firstname") String firstname) {
+        return playerInfoApiHelper.retrievePlayersByFirstname(firstname);
+    }
+
+    @GetMapping("/by-country/{country}")
+    public Flux<PlayerInfoDTO> retrievePlayersInfoByCountry(@PathVariable("country") String country) {
+        return playerInfoApiHelper.retrievePlayersByCountry(country);
     }
 }
