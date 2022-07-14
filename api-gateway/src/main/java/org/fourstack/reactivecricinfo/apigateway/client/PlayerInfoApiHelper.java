@@ -133,4 +133,19 @@ public class PlayerInfoApiHelper {
     public Flux<PlayerInfoDTO> retrievePlayersByCountry(String country) {
         return getPlayerInfoDTOFlux(uriProperties.getPlayerByCountryURL(), country);
     }
+
+    /**
+     * Method which retrieves the Players INfo using the WebClient and Gender
+     * variable. This is an external API call which makes connection with
+     * player-info-service to fetch Flux of PlayerInfo objects.
+     * <br/>
+     * To fetch Flux of PlayerInfo objects, WebClient uses URL from yml file
+     * with property name: <b><i>{app.player-service.url.player-by-gender}</i></b>
+     *
+     * @param gender Gender property value.
+     * @return Flux of PlayerInfoDTO objects.
+     */
+    public Flux<PlayerInfoDTO> retrievePlayersByGender(String gender) {
+        return getPlayerInfoDTOFlux(uriProperties.getPlayerByGenderURL(), gender);
+    }
 }
