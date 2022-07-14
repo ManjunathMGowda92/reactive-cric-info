@@ -36,4 +36,8 @@ public class PlayerInfoController {
     public Flux<PlayerInfoDTO> retrievePlayersInfoByCountry(@PathVariable("country") String country) {
         return playerInfoApiHelper.retrievePlayersByCountry(country);
     }
+
+    public Flux<PlayerInfoDTO> retrievePlayersInfoByGender(@PathVariable("gender") String gender) {
+        return playerInfoApiHelper.retrievePlayersByGender(gender);
+    }
 }
