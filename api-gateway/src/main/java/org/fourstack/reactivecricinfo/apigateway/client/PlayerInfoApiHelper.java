@@ -163,4 +163,19 @@ public class PlayerInfoApiHelper {
     public Flux<PlayerInfoDTO> retrievePlayersByBattingStyle(String battingStyle) {
         return getPlayerInfoDTOFlux(uriProperties.getPlayerByBattingStyleURL(), battingStyle);
     }
+
+    /**
+     * Method which retrieves the Players Info using the WebClient and Bowling Style
+     * variable. This is an external API call which makes connection with
+     * player-info-service to fetch Flux of PlayerInfo objects.
+     * <br/>
+     * To fetch Flux of PlayerInfo objects, WebClient uses URL from yml file with
+     * property name: <b><i>{app.player-service.url.player-by-bowling-style}</i></b>
+     *
+     * @param bowlingStyle Bowling Style property value.
+     * @return Flux of PlayerInfoDTO objects.
+     */
+    public Flux<PlayerInfoDTO> retrievePlayersByBowlingStyle(String bowlingStyle) {
+        return getPlayerInfoDTOFlux(uriProperties.getPlayerByBowlingStyleURL(), bowlingStyle);
+    }
 }

@@ -46,4 +46,9 @@ public class PlayerInfoController {
     public Flux<PlayerInfoDTO> retrievePlayersInfoByBattingStyle(@PathVariable("batting-style") String battingStyle) {
         return playerInfoApiHelper.retrievePlayersByBattingStyle(battingStyle);
     }
+
+    @GetMapping("/by-bowling-style/{bowling-style}")
+    public Flux<PlayerInfoDTO> retrievePlayersInfoByBowlingStyle(@PathVariable("bowling-style") String bowlingStyle) {
+        return playerInfoApiHelper.retrievePlayersByBowlingStyle(bowlingStyle);
+    }
 }
