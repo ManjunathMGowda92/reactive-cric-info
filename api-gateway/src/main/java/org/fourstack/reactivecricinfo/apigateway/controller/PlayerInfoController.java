@@ -37,7 +37,13 @@ public class PlayerInfoController {
         return playerInfoApiHelper.retrievePlayersByCountry(country);
     }
 
+    @GetMapping("/by-gender/{gender}")
     public Flux<PlayerInfoDTO> retrievePlayersInfoByGender(@PathVariable("gender") String gender) {
         return playerInfoApiHelper.retrievePlayersByGender(gender);
+    }
+
+    @GetMapping("/by-batting-style/{batting-style}")
+    public Flux<PlayerInfoDTO> retrievePlayersInfoByBattingStyle(@PathVariable("batting-style") String battingStyle) {
+        return playerInfoApiHelper.retrievePlayersByBattingStyle(battingStyle);
     }
 }

@@ -135,7 +135,7 @@ public class PlayerInfoApiHelper {
     }
 
     /**
-     * Method which retrieves the Players INfo using the WebClient and Gender
+     * Method which retrieves the Players Info using the WebClient and Gender
      * variable. This is an external API call which makes connection with
      * player-info-service to fetch Flux of PlayerInfo objects.
      * <br/>
@@ -147,5 +147,20 @@ public class PlayerInfoApiHelper {
      */
     public Flux<PlayerInfoDTO> retrievePlayersByGender(String gender) {
         return getPlayerInfoDTOFlux(uriProperties.getPlayerByGenderURL(), gender);
+    }
+
+    /**
+     * Method which retrieves the Players Info using the WebClient and Batting Style
+     * variable. This is an external API call which makes connection with
+     * player-info-service to fetch Flux of PlayerInfo objects.
+     * <br/>
+     * To fetch Flux of PlayerInfo objects, WebClient uses URL from yml file
+     * with property name: <b><i>{app.player-service.url.player-by-batting-style}</i></b>
+     *
+     * @param battingStyle Batting Style property value.
+     * @return Flux of PlayerInfoDTO objects.
+     */
+    public Flux<PlayerInfoDTO> retrievePlayersByBattingStyle(String battingStyle) {
+        return getPlayerInfoDTOFlux(uriProperties.getPlayerByBattingStyleURL(), battingStyle);
     }
 }
