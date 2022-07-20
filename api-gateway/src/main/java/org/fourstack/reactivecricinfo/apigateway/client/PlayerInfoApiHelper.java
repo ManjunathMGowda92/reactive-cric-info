@@ -1,5 +1,8 @@
 package org.fourstack.reactivecricinfo.apigateway.client;
 
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
+import io.netty.handler.codec.http.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
 import org.fourstack.reactivecricinfo.apigateway.config.UriPropertiesConfig;
 import org.fourstack.reactivecricinfo.apigateway.dto.ErrorResponse;
@@ -13,6 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
+import static io.netty.handler.codec.http.HttpHeaderValues.*;
 
 /**
  * External API Helper class which makes connection with
@@ -177,5 +183,34 @@ public class PlayerInfoApiHelper {
      */
     public Flux<PlayerInfoDTO> retrievePlayersByBowlingStyle(String bowlingStyle) {
         return getPlayerInfoDTOFlux(uriProperties.getPlayerByBowlingStyleURL(), bowlingStyle);
+    }
+
+    /**
+     * Method which is used to create PlayerInfo using the WebClient and {@link PlayerInfoDTO}
+     * object. This is an external API call which makes connection with
+     * player-info-service to create the PlayerInfo object.
+     * <br/>
+     * To create PlayerInfo object, WebClient uses URL from yml file with
+     * property name: <b><i>{app.player-service.url.create-player-info}</i></b>
+     *
+     * @param dto {@link PlayerInfoDTO} object.
+     * @return PlayerInfoDTO object with playerId.
+     */
+    public Mono<PlayerInfoDTO> createPlayerInfo(PlayerInfoDTO dto) {
+        return webClient.post()
+                .uri(uriProperties.getCreatePlayerURL())
+                .header(CONTENT_TYPE.toString(), APPLICATION_JSON.toString())
+                .body(Mono.just(dto), PlayerInfoDTO.class)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(
+                        HttpStatus::is4xxClientError,
+                        clientResponse -> clientResponse.bodyToMono(ErrorResponse.class)
+                                .map(PlayerClientException::new)
+                ).onStatus(
+                        HttpStatus::is5xxServerError,
+                        clientResponse -> clientResponse.bodyToMono(ErrorResponse.class)
+                                .map(PlayerServiceException::new)
+                ).bodyToMono(PlayerInfoDTO.class);
     }
 }

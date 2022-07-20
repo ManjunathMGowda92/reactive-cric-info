@@ -3,10 +3,7 @@ package org.fourstack.reactivecricinfo.apigateway.controller;
 import org.fourstack.reactivecricinfo.apigateway.client.PlayerInfoApiHelper;
 import org.fourstack.reactivecricinfo.apigateway.dto.PlayerInfoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -50,5 +47,10 @@ public class PlayerInfoController {
     @GetMapping("/by-bowling-style/{bowling-style}")
     public Flux<PlayerInfoDTO> retrievePlayersInfoByBowlingStyle(@PathVariable("bowling-style") String bowlingStyle) {
         return playerInfoApiHelper.retrievePlayersByBowlingStyle(bowlingStyle);
+    }
+
+    @PostMapping("/create-player")
+    public Mono<PlayerInfoDTO> createPlayerInfo(@RequestBody PlayerInfoDTO profileDTO) {
+        return playerInfoApiHelper.createPlayerInfo(profileDTO);
     }
 }
