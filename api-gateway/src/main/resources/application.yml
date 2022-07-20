@@ -23,6 +23,7 @@ app:
   player-service:
     base-url: 'http://localhost:8080/player-profile/api/v1/player'
     url:
+      create-player-info: '${app.player-service.base-url}'
       player-by-id: '${app.player-service.base-url}/{id}'
       player-by-lastname: '${app.player-service.base-url}/by-lastname/{lastname}'
       player-by-firstname: '${app.player-service.base-url}/by-firstname/{firstname}'

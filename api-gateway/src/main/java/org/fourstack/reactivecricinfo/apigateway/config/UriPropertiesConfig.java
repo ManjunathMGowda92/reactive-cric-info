@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 public class UriPropertiesConfig {
 
+    @Value("${app.player-service.url.create-player-info}")
+    private String createPlayerURL;
+
     @Value("${app.player-service.url.player-by-id}")
     private String playerByIdURL;
 
