@@ -16,6 +16,13 @@ import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
+/**
+ * Handler class which is responsible to handle the different services.
+ * Router class will use the Handler class methods to fulfill the
+ * API request calls.
+ *
+ * @author manjunath
+ */
 @Service
 @Slf4j
 public class RankingServiceHandlerImpl implements RankingServiceHandler {
@@ -29,6 +36,13 @@ public class RankingServiceHandlerImpl implements RankingServiceHandler {
     @Autowired
     private ConversionService rankDtoToDaoConverter;
 
+    /**
+     * Method which is responsible to fetch the {@link IccRankDTO} using the
+     * RankingId.
+     *
+     * @param request ServerRequest object with rankingId as path variable.
+     * @return ServerResponse object wrapped with IccRankDTO object.
+     */
     @Override
     public Mono<ServerResponse> fetchRankingInfoById(ServerRequest request) {
         String id = request.pathVariable("id");
@@ -45,6 +59,15 @@ public class RankingServiceHandlerImpl implements RankingServiceHandler {
                 .flatMap(ServerResponse.ok()::bodyValue);
     }
 
+    /**
+     * Method responsible to create Error. Accepts different arguments and converts it into Error.
+     *
+     * @param errorMsg  Error Message value.
+     * @param concatStr Extract String if needed for errorMsg concatenation.
+     * @param exception Throwable object instance.
+     * @param method    Name of the method from where the method is called.
+     * @return
+     */
     private Mono<IccRanking> createError(String errorMsg, String concatStr, Throwable exception, String method) {
         log.error("RankingServiceHandlerImpl: Exception in method -> {} >> {}", method, errorMsg);
         if (Objects.nonNull(exception) && exception instanceof RankingServiceException) {
@@ -53,6 +76,13 @@ public class RankingServiceHandlerImpl implements RankingServiceHandler {
         return Mono.error(new RankingInfoNotFoundException(errorMsg.concat(concatStr)));
     }
 
+    /**
+     * Method responsible to fetch the {@link IccRankDTO} object using the
+     * playerId.
+     *
+     * @param request ServerRequest object with playerId path variable.
+     * @return ServerResponse wrapped with IccRankDTO object.
+     */
     @Override
     public Mono<ServerResponse> fetchRankingInfoByPlayerId(ServerRequest request) {
         var playerId = request.pathVariable("player-id");
@@ -68,6 +98,16 @@ public class RankingServiceHandlerImpl implements RankingServiceHandler {
                 .flatMap(ServerResponse.ok()::bodyValue);
     }
 
+    /**
+     * Method responsible to create RankingInfo object. Accepts {@link IccRankDTO} object
+     * which is wrapped in ServerRequest object. Then converts it into
+     * {@link IccRanking} object and saves it to Database. Once after
+     * saving again converts back to {@link IccRankDTO} and sends back
+     * to the calling API method.
+     *
+     * @param request ServerRequest object which wraps {@link IccRankDTO} object.
+     * @return ServerResponse object wrapped with IccRankDTO object.
+     */
     @Override
     public Mono<ServerResponse> createRankingInfo(ServerRequest request) {
         Mono<IccRankDTO> dtoMono = request.bodyToMono(IccRankDTO.class);
