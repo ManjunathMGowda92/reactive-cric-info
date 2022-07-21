@@ -139,10 +139,13 @@ public class BowlingServiceRouter {
     @Bean
     public RouterFunction<ServerResponse> serviceRouteApis(BowlingServiceHandler handler) {
         return RouterFunctions.route()
-                .nest(RequestPredicates.path("/api/v1/bowling-info"), builder -> {
-                    builder.GET("/by-player-id/{player-id}", handler::fetchBowlingInfoByPlayerId)
-                            .GET("/{id}", handler::fetchBowlingInfoById)
-                            .POST("", handler::createBowlingInfo);
-                }).build();
+                .nest(
+                        RequestPredicates.path("/api/v1/bowling-info"),
+                        builder -> {
+                            builder.GET("/by-player-id/{player-id}", handler::fetchBowlingInfoByPlayerId)
+                                    .GET("/{id}", handler::fetchBowlingInfoById)
+                                    .POST("", handler::createBowlingInfo);
+                        }
+                ).build();
     }
 }
