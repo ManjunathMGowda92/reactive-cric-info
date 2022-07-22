@@ -111,13 +111,18 @@ public class RankingServiceHandlerImpl implements RankingServiceHandler {
     @Override
     public Mono<ServerResponse> createRankingInfo(ServerRequest request) {
         Mono<IccRankDTO> dtoMono = request.bodyToMono(IccRankDTO.class);
+
         return dtoMono
                 .map(dto -> rankDtoToDaoConverter.convert(dto, IccRanking.class))
                 .flatMap(repository::save)
                 .map(savedObj -> rankDaoToDtoConverter.convert(savedObj, IccRankDTO.class))
                 .flatMap(ServerResponse.status(HttpStatus.CREATED)::bodyValue)
-                .onErrorResume(
-                        err -> Mono.error(new RankingServiceException("Exception while creating the RankingInfo", err))
-                );
+                /*.onErrorResume(
+                        err -> {
+                            log.error("RankingServiceHandler: Exception -> {}", err.getMessage());
+                            return Mono.error(new RankingServiceException(
+                                    "Exception while creating the RankingInfo :".concat(err.getMessage()), err));
+                        }
+                )*/;
     }
 }

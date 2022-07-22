@@ -9,6 +9,7 @@ import org.fourstack.reactivecricinfo.rankinginfoservice.utils.IdGenerationUtil;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -19,12 +20,13 @@ public class RankDtoToDaoConverter implements Converter<IccRankDTO, IccRanking> 
         target.setRankingId(IdGenerationUtil.generateRankingId(source.getPlayerId()));
         target.setPlayerId(source.getPlayerId());
 
-        source.getRankings()
+        List<Rank> rankList = source.getRankings()
                 .stream()
                 .map(dto -> convertToRank(dto))
                 .collect(Collectors.toList());
+        target.setRankings(rankList);
 
-        return null;
+        return target;
     }
 
     private Rank convertToRank(RankDTO dto) {

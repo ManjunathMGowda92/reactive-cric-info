@@ -22,7 +22,7 @@ public class RankDaoToDtoConverter implements Converter<IccRanking, IccRankDTO> 
                 .map(this::convertToRankDTO)
                 .collect(Collectors.toList());
         target.setRankings(rankDTOS);
-        return null;
+        return target;
     }
 
     private RankDTO convertToRankDTO(Rank rank) {

@@ -4,16 +4,16 @@ import org.fourstack.reactivecricinfo.rankinginfoservice.dao.RankingInfoDao;
 import org.fourstack.reactivecricinfo.rankinginfoservice.dto.IccRankDTO;
 import org.fourstack.reactivecricinfo.rankinginfoservice.exceptionhandling.ErrorResponse;
 import org.fourstack.reactivecricinfo.rankinginfoservice.testUtils.EntityGenerator;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Profile("test")
@@ -32,6 +32,11 @@ public class RankingInfoFlowTest {
                 .block();
     }
 
+    @AfterEach
+    public void eraseData() {
+        dao.deleteAll().block();
+    }
+
     @Test
     @DisplayName("RankingInfoFlowTest: RankingInfoNotFoundException - RankingId.")
     public void testFetchRankingByIdNotFound() {
@@ -45,8 +50,8 @@ public class RankingInfoFlowTest {
                 .consumeWith(exchangeResult -> {
                     var response = exchangeResult.getResponseBody();
                     assert response != null;
-                    Assertions.assertEquals(404,response.getErrorCode());
-                    Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+                    assertEquals(404,response.getErrorCode());
+                    assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
                 });
 
     }
@@ -65,8 +70,33 @@ public class RankingInfoFlowTest {
                 .consumeWith(exchangeResult -> {
                     var response = exchangeResult.getResponseBody();
                     assert response != null;
-                    Assertions.assertEquals(404, response.getErrorCode());
-                    Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+                    assertEquals(404, response.getErrorCode());
+                    assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+                });
+    }
+
+    @Test
+    @DisplayName("RankingInfoFlowTest: Create RankingInfo.")
+    public void testCreateRankingInfo() {
+        String path = "/api/v1/ranking-info";
+        IccRankDTO dto = EntityGenerator.iccRankDTO();
+        dto.setRankId(null);
+        String playerId = "SAC2022-6T8-15L23-9NPZ";
+        dto.setPlayerId(playerId);
+
+        webTestClient.post()
+                .uri(path)
+                .bodyValue(dto)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(IccRankDTO.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    assertEquals(playerId, response.getPlayerId());
+                    assertEquals("RK".concat(playerId), response.getRankId());
+                    assertEquals(3, response.getRankings().size());
                 });
     }
 }
