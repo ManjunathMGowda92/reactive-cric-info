@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.net.ConnectException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 /**
@@ -58,6 +58,8 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
             response = createErrorResponse(ex.getMessage(), NOT_FOUND, path);
         } else if (ex instanceof RankingServiceException) {
             response = createErrorResponse(ex.getMessage(), INTERNAL_SERVER_ERROR, path);
+        } else if (ex instanceof ConnectException) {
+            response = createErrorResponse(ex.getMessage(), SERVICE_UNAVAILABLE, path);
         } else {
             response = createErrorResponse("Internal Exception: " + ex.getMessage(), INTERNAL_SERVER_ERROR, path);
         }
