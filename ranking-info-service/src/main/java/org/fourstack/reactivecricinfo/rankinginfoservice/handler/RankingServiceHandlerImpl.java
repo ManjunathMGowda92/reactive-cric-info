@@ -117,12 +117,12 @@ public class RankingServiceHandlerImpl implements RankingServiceHandler {
                 .flatMap(repository::save)
                 .map(savedObj -> rankDaoToDtoConverter.convert(savedObj, IccRankDTO.class))
                 .flatMap(ServerResponse.status(HttpStatus.CREATED)::bodyValue)
-                /*.onErrorResume(
+                .onErrorResume(
                         err -> {
                             log.error("RankingServiceHandler: Exception -> {}", err.getMessage());
                             return Mono.error(new RankingServiceException(
                                     "Exception while creating the RankingInfo :".concat(err.getMessage()), err));
                         }
-                )*/;
+                );
     }
 }

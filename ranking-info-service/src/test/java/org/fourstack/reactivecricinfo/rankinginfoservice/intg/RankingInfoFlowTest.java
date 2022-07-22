@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,6 +55,25 @@ public class RankingInfoFlowTest {
                     assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
                 });
 
+    }
+
+    @Test
+    @DisplayName("RankingInfoFlowTest: Fetch RankingInfo By rankingId")
+    public void testFetchRankingInfoById() {
+        String rankingId = "RKSAC2022-6T8-15L23-9NPZ-50234200";
+        String path = "/api/v1/ranking-info/{id}";
+        String playerId = "SAC2022-6T8-15L23-9NPZ-50234200";
+        webTestClient.get()
+                .uri(path, rankingId)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(IccRankDTO.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    assertEquals(playerId, response.getPlayerId());
+                    assertEquals(3, response.getRankings().size());
+                });
     }
 
     @Test
