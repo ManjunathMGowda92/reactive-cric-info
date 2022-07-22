@@ -1,6 +1,6 @@
 package org.fourstack.reactivecricinfo.rankinginfoservice.converters;
 
-import org.fourstack.reactivecricinfo.rankinginfoservice.config.Format;
+import org.fourstack.reactivecricinfo.rankinginfoservice.codetype.Format;
 import org.fourstack.reactivecricinfo.rankinginfoservice.dto.IccRankDTO;
 import org.fourstack.reactivecricinfo.rankinginfoservice.dto.RankDTO;
 import org.fourstack.reactivecricinfo.rankinginfoservice.model.IccRanking;
