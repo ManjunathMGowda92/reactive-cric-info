@@ -51,7 +51,7 @@ public class RankingInfoFlowTest {
                 .consumeWith(exchangeResult -> {
                     var response = exchangeResult.getResponseBody();
                     assert response != null;
-                    assertEquals(404,response.getErrorCode());
+                    assertEquals(404, response.getErrorCode());
                     assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
                 });
 
@@ -72,6 +72,26 @@ public class RankingInfoFlowTest {
                     var response = exchangeResult.getResponseBody();
                     assert response != null;
                     assertEquals(playerId, response.getPlayerId());
+                    assertEquals(3, response.getRankings().size());
+                });
+    }
+
+    @Test
+    @DisplayName("RankingInfoFlowTest: Fetch RankingInfo by player id.")
+    public void testFetchRankingByPlayerId() {
+        String playerId = "SAC2022-6T8-15L23-9NPZ-50234200";
+        String path = "/api/v1/ranking-info/by-player-id/{player-id}";
+        String rankingId = "RKSAC2022-6T8-15L23-9NPZ-50234200";
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path(path)
+                        .build(playerId)
+                ).exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(IccRankDTO.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    assertEquals(rankingId, response.getRankId());
                     assertEquals(3, response.getRankings().size());
                 });
     }
