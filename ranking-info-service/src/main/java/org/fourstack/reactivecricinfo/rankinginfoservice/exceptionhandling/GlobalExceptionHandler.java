@@ -48,7 +48,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
                 .errorCode(status.value())
                 .status(status)
                 .urlDetails(url)
-                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
+                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")).toString())
                 .build();
     }
 
