@@ -1,12 +1,14 @@
 package org.fourstack.reactivecricinfo.rankinginfoservice.unit;
 
 import org.fourstack.reactivecricinfo.rankinginfoservice.converters.RankDaoToDtoConverter;
+import org.fourstack.reactivecricinfo.rankinginfoservice.converters.RankDtoToDaoConverter;
 import org.fourstack.reactivecricinfo.rankinginfoservice.dao.RankingInfoDao;
 import org.fourstack.reactivecricinfo.rankinginfoservice.dto.IccRankDTO;
 import org.fourstack.reactivecricinfo.rankinginfoservice.exceptionhandling.ErrorResponse;
 import org.fourstack.reactivecricinfo.rankinginfoservice.exceptionhandling.GlobalExceptionHandler;
 import org.fourstack.reactivecricinfo.rankinginfoservice.handler.RankingServiceHandler;
 import org.fourstack.reactivecricinfo.rankinginfoservice.handler.RankingServiceHandlerImpl;
+import org.fourstack.reactivecricinfo.rankinginfoservice.model.IccRanking;
 import org.fourstack.reactivecricinfo.rankinginfoservice.router.RankingServiceRouter;
 import org.fourstack.reactivecricinfo.rankinginfoservice.testUtils.EntityGenerator;
 import org.junit.jupiter.api.Assertions;
@@ -32,7 +34,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
                 RankingServiceHandlerImpl.class,
                 GlobalExceptionHandler.class,
                 RankDaoToDtoConverter.class,
-                RankDaoToDtoConverter.class
+                RankDtoToDaoConverter.class
         }
 )
 @AutoConfigureWebTestClient
@@ -95,7 +97,7 @@ public class RankingInfoRouterTest {
         String path = "/api/v1/ranking-info/{id}";
 
         Mockito.when(dao.findById(Mockito.anyString()))
-                        .thenThrow(new RuntimeException("Service Exception"));
+                .thenThrow(new RuntimeException("Service Exception"));
 
         webTestClient.get()
                 .uri(path, rankingId)
@@ -161,12 +163,57 @@ public class RankingInfoRouterTest {
         String path = "/api/v1/ranking-info/by-player-id/{player-id}";
 
         Mockito.when(dao.findByPlayerId(Mockito.anyString()))
-                        .thenThrow(new RuntimeException("Service Exception"));
+                .thenThrow(new RuntimeException("Service Exception"));
 
         webTestClient.get()
                 .uri(uriBuilder -> uriBuilder.path(path)
                         .build(playerId)
                 ).exchange()
+                .expectStatus().is5xxServerError()
+                .expectBody(ErrorResponse.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    Assertions.assertEquals(500, response.getErrorCode());
+                    Assertions.assertEquals(INTERNAL_SERVER_ERROR, response.getStatus());
+                });
+    }
+
+    @Test
+    @DisplayName("RankingInfoRouterTest: Create Ranking Info.")
+    public void testCreateRankingInfo() {
+        IccRankDTO dto = EntityGenerator.iccRankDTO();
+        String path = "/api/v1/ranking-info";
+
+        IccRanking daoObj = EntityGenerator.iccRanking();
+        Mockito.when(dao.save(Mockito.any()))
+                .thenReturn(Mono.just(daoObj));
+
+        webTestClient.post()
+                .uri(path)
+                .bodyValue(dto)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(IccRankDTO.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    Assertions.assertEquals(3, response.getRankings().size());
+                });
+
+    }
+
+    @Test
+    @DisplayName("RankingInfoRouterTest: Create Ranking Info - ServiceException")
+    public void testCreateRankingInfoServiceException() {
+        String path = "/api/v1/ranking-info";
+        Mockito.when(dao.save(Mockito.any()))
+                .thenThrow(new RuntimeException("Service Exception"));
+
+        webTestClient.post()
+                .uri(path)
+                .bodyValue(EntityGenerator.iccRankDTO())
+                .exchange()
                 .expectStatus().is5xxServerError()
                 .expectBody(ErrorResponse.class)
                 .consumeWith(exchangeResult -> {
