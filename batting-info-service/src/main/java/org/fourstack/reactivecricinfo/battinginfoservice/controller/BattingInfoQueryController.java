@@ -22,12 +22,12 @@ public class BattingInfoQueryController {
     private BattingInfoService service;
 
     @GetMapping("/{id}")
-    public Mono<BattingInfoDTO> getBattingInfoById(@PathVariable String id) {
+    public Mono<BattingInfoDTO> getBattingInfoById(@PathVariable("id") String id) {
         return service.getBattingInfoById(id);
     }
 
     @GetMapping("/by-player-id/{player-id}")
-    public Mono<BattingInfoDTO> getBattingInfoByPLayerId(@PathVariable String playerId) {
+    public Mono<BattingInfoDTO> getBattingInfoByPLayerId(@PathVariable("player-id") String playerId) {
         return service.getBattingInfoByPlayerId(playerId);
     }
 }

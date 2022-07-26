@@ -43,7 +43,7 @@ public class BattingInfoServiceImpl implements BattingInfoService {
     @Override
     public Mono<BattingInfoDTO> getBattingInfoById(String id) {
         return repository
-                .findByPlayerId(id)
+                .findById(id)
                 .switchIfEmpty(
                         createBattingInfoNotFoundException(
                                 "BattingInfo data not found for the Id:",

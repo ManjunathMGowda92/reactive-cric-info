@@ -5,10 +5,7 @@ import org.fourstack.reactivecricinfo.battinginfoservice.dto.BattingInfoDTO;
 import org.fourstack.reactivecricinfo.battinginfoservice.exception.model.ErrorResponse;
 import org.fourstack.reactivecricinfo.battinginfoservice.model.BattingInfo;
 import org.fourstack.reactivecricinfo.battinginfoservice.util.EntityGenerator;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,14 +28,30 @@ public class BattingInfoFlowTest {
     @BeforeEach
     public void setUpData() {
         BattingInfo entity = EntityGenerator.battingInfoDAO();
-        dao.saveAll(List.of(entity))
-                .blockLast();
+        dao.save(entity).block();
     }
 
     @AfterEach
     public void eraseData() {
         dao.deleteAll()
                 .block();
+    }
+
+    @Test
+    @DisplayName("BattingInfoFlowTest: Find BattingInfo by Id.")
+    public void testGetBattingInfoById() {
+        String battingId = "BAT-SAC2022-6T8-15L23-9NPZ-50234200";
+        String path = "/api/v1/batting-info/{id}";
+        webTestClient.get()
+                .uri(path, battingId)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(BattingInfoDTO.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+
+                });
     }
 
     @Test
@@ -55,6 +68,23 @@ public class BattingInfoFlowTest {
                     var response = exchangeResult.getResponseBody();
                     assert response != null;
                     System.out.println(response);
+                });
+    }
+
+    @Test
+    @DisplayName("BattingInfoFlowTest: Find Batting Info By PlayerId")
+    public void testGetBattingInfoByPlayerId() {
+        String playerId = "SAC2022-6T8-15L23-9NPZ-50234200";
+        String path = "/api/v1/batting-info/by-player-id/{player-id}";
+        webTestClient.get()
+                .uri(path, playerId)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(BattingInfoDTO.class)
+                .consumeWith(exchangeResult -> {
+                    var response = exchangeResult.getResponseBody();
+                    assert response != null;
+                    Assertions.assertEquals(3, response.getStatistics().size());
                 });
     }
 }
