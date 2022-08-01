@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.net.ConnectException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 import static java.lang.Integer.valueOf;
 import static org.fourstack.reactivecricinfo.bowlinginfoservice.constants.BowlingServiceConstants.*;
+import static org.springframework.http.HttpStatus.*;
 
 @Component
 public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
@@ -30,15 +32,22 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         Map<String, Object> attributes = new HashMap<>();
+        var path = exchange.getRequest().getPath().value();
+        attributes.put(URI_PATH, path);
         if (ex instanceof BowlingDataNotFoundException) {
             // Code to handle BowlingDataNotFoundException.
-            attributes.put(ERROR_CODE, valueOf(HttpStatus.NOT_FOUND.value()));
-            attributes.put(STATUS, HttpStatus.NOT_FOUND);
+            attributes.put(ERROR_CODE, valueOf(NOT_FOUND.value()));
+            attributes.put(STATUS, NOT_FOUND);
             attributes.put(ERROR_MSG, ex.getMessage());
-        } else {
+        } else if (ex instanceof ConnectException) {
+            // Code to handle ConnectException (when the target service is unavailable).
+            attributes.put(ERROR_CODE, valueOf(SERVICE_UNAVAILABLE.value()));
+            attributes.put(STATUS, SERVICE_UNAVAILABLE);
+            attributes.put(ERROR_MSG, ex.getMessage());
+        }else {
             // Code to handle unknown Exceptions.
-            attributes.put(ERROR_CODE, valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
-            attributes.put(STATUS, HttpStatus.INTERNAL_SERVER_ERROR);
+            attributes.put(ERROR_CODE, valueOf(INTERNAL_SERVER_ERROR.value()));
+            attributes.put(STATUS, INTERNAL_SERVER_ERROR);
             attributes.put(ERROR_MSG, "Internal Exception : "+ex.getMessage());
         }
 
