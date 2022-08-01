@@ -2,16 +2,17 @@ package org.fourstack.reactivecricinfo.playerinfoservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fourstack.reactivecricinfo.playerinfoservice.exception.model.ErrorResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.net.ConnectException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @ControllerAdvice
@@ -31,13 +32,11 @@ public class GlobalExceptionHandler {
             PlayerInfoNotFoundException exception, ServerHttpRequest request) {
         log.error("PlayerInfoNotFoundException caught : {}", exception.getMessage());
 
-        ErrorResponse response = ErrorResponse.builder()
-                .errorCode(NOT_FOUND.value())
-                .errorMsg(exception.getMessage())
-                .status(NOT_FOUND)
-                .urlDetails(request.getPath().value())
-                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
-                .build();
+        ErrorResponse response = createErrorResponse(
+                exception.getMessage(),
+                NOT_FOUND,
+                request.getPath().value()
+        );
 
         return ResponseEntity.status(NOT_FOUND)
                 .body(response);
@@ -57,14 +56,44 @@ public class GlobalExceptionHandler {
             PlayerServiceException exception, ServerHttpRequest request) {
         log.error("PlayerServiceException caught : {}", exception.getMessage());
 
-        ErrorResponse response = ErrorResponse.builder()
-                .errorMsg(exception.getMessage())
-                .errorCode(INTERNAL_SERVER_ERROR.value())
-                .status(INTERNAL_SERVER_ERROR)
-                .urlDetails(request.getPath().value())
-                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
-                .build();
+        ErrorResponse response = createErrorResponse(
+                exception.getMessage(),
+                INTERNAL_SERVER_ERROR,
+                request.getPath().value()
+        );
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(response);
+    }
+
+    /**
+     * Exception handling method to handle {@link ConnectException}.
+     * Exception will be converted to {@link ErrorResponse} object with suitable
+     * error message and other details.
+     *
+     * @param exception {@link ConnectException} object
+     * @param request   HttpRequest object.
+     * @return ErrorResponse object.
+     */
+    public ResponseEntity<ErrorResponse> handleConnectException(
+            ConnectException exception, ServerHttpRequest request) {
+        log.error("ConnectException caught : {}", exception.getMessage());
+
+        ErrorResponse response = createErrorResponse(
+                exception.getMessage(),
+                SERVICE_UNAVAILABLE,
+                request.getPath().value()
+        );
+        return ResponseEntity.status(SERVICE_UNAVAILABLE)
+                .body(response);
+    }
+
+    private ErrorResponse createErrorResponse(String errorMsg, HttpStatus status, String url) {
+        return ErrorResponse.builder()
+                .errorMsg(errorMsg)
+                .errorCode(status.value())
+                .status(status)
+                .urlDetails(url)
+                .timeStamp(LocalDateTime.now(ZoneId.of("UTC")))
+                .build();
     }
 }
