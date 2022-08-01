@@ -3,6 +3,7 @@ package org.fourstack.reactivecricinfo.battinginfoservice.service;
 import org.fourstack.reactivecricinfo.battinginfoservice.dao.BattingInfoDao;
 import org.fourstack.reactivecricinfo.battinginfoservice.dto.BattingInfoDTO;
 import org.fourstack.reactivecricinfo.battinginfoservice.exception.BattingInfoNotFoundException;
+import org.fourstack.reactivecricinfo.battinginfoservice.exception.BattingServiceException;
 import org.fourstack.reactivecricinfo.battinginfoservice.model.BattingInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -25,6 +26,7 @@ public class BattingInfoServiceImpl implements BattingInfoService {
     public Mono<BattingInfoDTO> getBattingInfoByPlayerId(String playerId) {
         return repository
                 .findByPlayerId(playerId)
+                .onErrorResume(err -> Mono.error(new BattingServiceException(err.getMessage(), err.getCause())))
                 .switchIfEmpty(
                         createBattingInfoNotFoundException(
                                 "BattingInfo data not found for the playerId: ",
@@ -44,6 +46,7 @@ public class BattingInfoServiceImpl implements BattingInfoService {
     public Mono<BattingInfoDTO> getBattingInfoById(String id) {
         return repository
                 .findById(id)
+                .onErrorResume(err -> Mono.error(new BattingServiceException(err.getMessage(), err.getCause())))
                 .switchIfEmpty(
                         createBattingInfoNotFoundException(
                                 "BattingInfo data not found for the Id:",
@@ -58,6 +61,7 @@ public class BattingInfoServiceImpl implements BattingInfoService {
 
         return repository
                 .save(battingInfo)
-                .map(daoModel -> battingDaoToDtoConverter.convert(daoModel, BattingInfoDTO.class));
+                .map(daoModel -> battingDaoToDtoConverter.convert(daoModel, BattingInfoDTO.class))
+                .onErrorResume(err -> Mono.error(new BattingServiceException(err.getMessage(), err.getCause())));
     }
 }
